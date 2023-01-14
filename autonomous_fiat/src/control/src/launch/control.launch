@@ -1,0 +1,5 @@
+<launch>
+    <node name="control_node" pkg="controle_module" type="controle_module" output="screen" respawn="true" respawn_delay="1" >
+        <rosparam file="$(find control_module)/config/config.yaml" />
+    </node>
+</launch>

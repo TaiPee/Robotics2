@@ -1,0 +1,9 @@
+# PID parameters
+K: 10.0
+I: 1.0
+
+# Controller
+look_ahead_time: 1:0
+
+# Map Directory
+map_dir: /home/autonomous_fiat/src/control/src/maps/test_map.yaml

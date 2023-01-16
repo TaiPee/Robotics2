@@ -1,0 +1,2 @@
+.
+-DCATKIN_DEVEL_PREFIX=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/control/devel -DCMAKE_INSTALL_PREFIX=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/control/install -G Unix Makefiles

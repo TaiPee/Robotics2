@@ -14,20 +14,19 @@ def get_reference():
 
     return points
 
-def plot_ref_path(points, actual_pos, idx,final_idx):
+def plot_ref_path(points,idx,final_idx):
     plt.plot(points[:,0], points[:,1])
     plt.scatter(points[idx,0],points[idx,1])
     plt.scatter(points[final_idx,0],points[final_idx,1])
-    plt.scatter(actual_pos[0], actual_pos[1])
     plt.show()
 
-def closest_point(actual_pos,points):
+def closest_point(atual_position,points):
 
     closest_idx = 0
     closest_distance = float("inf")
     
     for i, point in enumerate(points):
-        distance = np.sqrt(np.power(point[0] - actual_pos[0],2) + np.power(point[1] - actual_pos[1],2))
+        distance = np.sqrt(np.power(point[0] - atual_position[0],2) + np.power(point[1] - atual_position[1],2))
         if distance < closest_distance:
             closest_idx = i
             closest_distance = distance
@@ -52,12 +51,12 @@ def look_ahead_point(points, idx, ref_distance):
 
 if __name__ == '__main__':
     reference_path = get_reference()
-    actual_pos = np.array([4,1,np.pi]) # [x,y,orientation] [m,m,rad]
+    actual_position = np.array([4,1])
     distance = 100
-    idx =  closest_point(actual_pos,reference_path)
+    idx =  closest_point(actual_position,reference_path)
     final_idx = look_ahead_point(reference_path, idx, distance)
     print(reference_path[idx])
-    plot_ref_path(reference_path, actual_pos, idx, final_idx)
+    plot_ref_path(reference_path, idx, final_idx)
 
 
 

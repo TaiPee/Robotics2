@@ -2,6 +2,7 @@
 import numpy as np
 import heapq
 import math
+from copy import deepcopy
 
 def euclidean(a, b):
     x1, y1 = a
@@ -72,7 +73,7 @@ class Graph:
     def heuristic(self, a, b):
         return euclidean(self.locations_dict[a], self.locations_dict[b])
 
-# Create graph from clusters
+# Create map from clusters
 class End:
     def __init__(self, location, end_id = None, group_id = None):
         self.location = location
@@ -86,12 +87,46 @@ class Edge:
 class Map:
     def __init__(self, clusters, neighbor_cluster_dist, plot_shape):
         
+        # store unique ends
         self.unique_ends = []
+
+        # aglomerate ends closer than neighbor_cluster_dist to same point
         self.fixEnds(clusters, neighbor_cluster_dist)
-        self.edges = [Edge(cluster) for cluster in clusters]
+
+        # get edges, removing edges that have same ends, but are longer, to bad_edges
+        self.edges, self.bad_edges = self.separateEdges(clusters)
+        
+        # get graph class from edges to use in search
         self.graph = self.getGraph()
+
+        # store plot shape for plotting
         self.plot_shape = plot_shape
-             
+    
+    def sameEnds(self, edge1, edge2):
+        return edge1.ends[0].location == edge2.ends[0].location and edge1.ends[1].location == edge2.ends[1].location
+
+    def separateEdges(self, clusters):
+
+        edges = [Edge(cluster) for cluster in clusters]
+        original_edges = deepcopy(edges)
+        good_edges = []
+        bad_edges = []
+
+        # signal edges that have same ends, but are longer, putting them in bad_edges
+        for i in range(len(edges)):
+            for j in range(i+1, len(edges)):
+                if self.sameEnds(edges[i], edges[j]):
+                    if edges[i].distance > edges[j].distance:
+                        bad_edges.append(original_edges[i])
+                        edges[i].distance = np.inf
+                    else:
+                        bad_edges.append(original_edges[j])
+                        edges[j].distance = np.inf
+
+        # remove bad edges
+        good_edges = [edge for edge in edges if edge.distance != np.inf]
+        return good_edges, bad_edges
+
     def fixEnds(self, clusters, neighbor_cluster_dist):
         """if there are ends closer than neighbor_cluster_dist, 
         the ends are replaced by the center of mass of both"""
@@ -158,32 +193,6 @@ class Map:
 
         return graph
         
-# Graph Example
-romania_map = Graph(dict(
-    Arad=dict(Zerind=75, Sibiu=140, Timisoara=118),
-    Bucharest=dict(Urziceni=85, Pitesti=101, Giurgiu=90, Fagaras=211),
-    Craiova=dict(Drobeta=120, Rimnicu=146, Pitesti=138),
-    Drobeta=dict(Mehadia=75),
-    Eforie=dict(Hirsova=86),
-    Fagaras=dict(Sibiu=99),
-    Hirsova=dict(Urziceni=98),
-    Iasi=dict(Vaslui=92, Neamt=87),
-    Lugoj=dict(Timisoara=111, Mehadia=70),
-    Oradea=dict(Zerind=71, Sibiu=151),
-    Pitesti=dict(Rimnicu=97),
-    Rimnicu=dict(Sibiu=80),
-    Urziceni=dict(Vaslui=142)), 
-    directed=False)
-
-romania_map.locations = dict(
-    Arad=(91, 492), Bucharest=(400, 327), Craiova=(253, 288),
-    Drobeta=(165, 299), Eforie=(562, 293), Fagaras=(305, 449),
-    Giurgiu=(375, 270), Hirsova=(534, 350), Iasi=(473, 506),
-    Lugoj=(165, 379), Mehadia=(168, 339), Neamt=(406, 537),
-    Oradea=(131, 571), Pitesti=(320, 368), Rimnicu=(233, 410),
-    Sibiu=(207, 457), Timisoara=(94, 410), Urziceni=(456, 350),
-    Vaslui=(509, 444), Zerind=(108, 531))
-
 # Search
 def a_star(graph, start, goal):
     frontier = [(0, start)]  # heap of (f_cost, node)
@@ -212,3 +221,14 @@ def a_star(graph, start, goal):
                 f_cost[neighbor] = cost + graph.heuristic(neighbor, goal)
                 heapq.heappush(frontier, (f_cost[neighbor], neighbor))
                 came_from[neighbor] = current
+
+def getPointsFromPath(path, map):
+    edges = map.edges
+    points = []
+    for i in range(len(path)-1):
+        for edge in edges:
+            if edge.ends[0].id == path[i] and edge.ends[1].id == path[i+1]:
+                points.extend(edge.cluster)
+                break
+    
+    return points

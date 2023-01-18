@@ -78,23 +78,15 @@ def main ():
 
         map = my_srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
         fixed_clusters = [edge.cluster for edge in map.edges]
-        dbg.plotClusters(fixed_clusters, sk.shape, 'Fixed clusters (' + str(len(fixed_clusters)) + ')' ) 
+        # dbg.plotClusters(fixed_clusters, sk.shape, 'Fixed clusters (' + str(len(fixed_clusters)) + ')' ) 
         dbg.plotMap(map)
 
-        start = map.graph.graph_dict[map.unique_ends[0].id]
-        end = map.graph.graph_dict[map.unique_ends[-1].id]
-        problem = my_srch.GraphProblem(start, end, map.graph)
-        
-        path = my_srch.astar_search(problem).path
-        
-        print('Path: ', path)
+        start = map.unique_ends[0].id
+        end = map.unique_ends[-1].id
+        path = my_srch.a_star(map.graph, start, end)
+        print(path)                
+        dbg.plotPath(path, map)
 
-        #list of points in path, removing last point of each cluster (same as first point of next cluster)
-        points = []
-        for cluster in path:
-            for point in cluster[:-1]:
-                points.append(point)
-        points.append(path[-1][-1])
 
         ########## SAVE .TXT TO PASS TO THE ROBOT ##########
             

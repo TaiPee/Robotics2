@@ -3,8 +3,6 @@ import numpy as np
 import functools
 import heapq
 import math
-import debug_plot as dbg
-import matplotlib.pyplot as plt
 
 # utils
 def is_in(elt, seq):
@@ -374,25 +372,25 @@ class End:
 
 class Edge:
     def __init__(self, cluster):
-        self.end1 = End(cluster[0])
-        self.end2 = End(cluster[-1])
+        self.ends = [End(cluster[0]), End(cluster[-1])]
         self.distance = sum([math.dist(cluster[i], cluster[i+1]) for i in range(len(cluster)-1)]) 
-
+        self.cluster = cluster
 class Map:
-    def __init__(self, clusters, neighbor_cluster_dist, shape):
-        self.clusters = clusters
-        self.fixEnds(neighbor_cluster_dist)
-        self.edges = [Edge(cluster) for cluster in self.clusters]
+    def __init__(self, clusters, neighbor_cluster_dist, plot_shape):
+        
+        self.unique_ends = []
+        self.fixEnds(clusters, neighbor_cluster_dist)
+        self.edges = [Edge(cluster) for cluster in clusters]
         self.graph = self.getGraph()
-        self.shape = shape
+        self.plot_shape = plot_shape
              
-    def fixEnds(self, neighbor_cluster_dist):
+    def fixEnds(self, clusters, neighbor_cluster_dist):
         """if there are ends closer than neighbor_cluster_dist, 
         the ends are replaced by the center of mass of both"""
 
         # get ends in single list
         ends = []
-        for cluster in self.clusters:
+        for cluster in clusters:
             ends.append(End(cluster[0]))
             ends.append(End(cluster[-1]))
 
@@ -416,9 +414,9 @@ class Map:
                 end.location = center_of_mass
 
         # replace ends in clusters
-        for i in range(len(self.clusters)):
-            self.clusters[i][0] = ends[2*i].location
-            self.clusters[i][-1] = ends[2*i+1].location
+        for i in range(len(clusters)):
+            clusters[i][0] = ends[2*i].location
+            clusters[i][-1] = ends[2*i+1].location
     
     def centerOfMass(self, list_of_ends):
         """returns the center of mass of a list of Ends"""
@@ -429,21 +427,22 @@ class Map:
     def getGraph(self):
         """returns a Graph of the edges in the map"""
 
-        # name all different ends in edges with an id
+        # name all ends with same locations with same id
         end_id = 'A'
-        unique = set()
+        self.unique_ends = set()
         for edge in self.edges:
-            unique.add(edge.end1.location)
-            unique.add(edge.end2.location)
-        for location in unique:
-            for edge in self.edges:
-                if edge.end1.location == location:
-                    edge.end1.id = end_id
-                if edge.end2.location == location:
-                    edge.end2.id = end_id
-            end_id = chr(ord(end_id)+1)
-            
+            for end in edge.ends:
+                if end.id is None:
+                    end.id = end_id
+                    self.unique_ends.add(end)
+                    for other_edge in self.edges:
+                        for other_end in other_edge.ends:
+                            if other_end.id is None and other_end.location == end.location:
+                                other_end.id = end_id
+                    end_id = chr(ord(end_id) + 1)
+                    
         graph = Graph(graph_dict=None, directed=False)
         for edge in self.edges:
-            graph.connect(edge.end1.id, edge.end2.id, edge.distance)
+            graph.connect(edge.ends[0].id, edge.ends[1].id, edge.distance)
+
         return graph

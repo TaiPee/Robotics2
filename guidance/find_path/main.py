@@ -10,10 +10,10 @@ import my_search as my_srch
 import debug_plot as dbg 
 
 # list images available
-IMAGES = ['images/path1.jpg' , 'images/path2.png']
+IMAGES = ['images/path1.jpg' , 'images/path2.png', 'images/tecnico.jpg']
 
 # index of images to to process inside IMAGES list (can process multiple images at once)
-IM_NUM = [1]
+IM_NUM = [2]
 PROCESS_IMG_NAMES = [IMAGES[i] for i in IM_NUM]    
 
 ############################################################################################
@@ -28,7 +28,7 @@ AREA = 600*1200 # area of the resized image - None to keep original size
 
 # Get relevant points
 
-MIN_TAIL_SIZE = 30 # tails that are shorter than MIN_TAIL_SIZE will be removed
+MIN_TAIL_SIZE = 10 # tails that are shorter than MIN_TAIL_SIZE will be removed
 BIF_WINDOW_SIZE = 7 # bif points have 3+ direct neibs, AND more than MIN_BIF_NEIGHBORS inside BIF_WINDOW_SIZE 
 MIN_BIF_NEIGHBORS = BIF_WINDOW_SIZE*3 # avoid considering edges as bifurcation points
 
@@ -50,7 +50,7 @@ SCALE = 1 # scale of the image to draw
 
 ##########   SEARCH    ##########
 
-INTER_CLUSTER_DIST = 30 # maximum distance between 2 clusters to be considered neighbors
+INTER_CLUSTER_DIST = 9 # maximum distance between 2 clusters to be considered neighbors
 
 ########################### MAIN ###########################
 
@@ -76,6 +76,8 @@ def main ():
         dbg.plotClusters(clusters, sk.shape)
 
         map = my_srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
+        fixed_clusters = [edge.cluster for edge in map.edges]
+        dbg.plotClusters(fixed_clusters, sk.shape)
         dbg.plotMap(map)
 
         ##########   SEARCH    ##########

@@ -203,36 +203,35 @@ def plotMap(map, title = None):
     if not PLOT:
         return
 
-    shape = map.shape    
-    clusters = map.clusters
-    edges = map.edges
-
+    edges = map.edges.copy()
+    shape = map.plot_shape    
+    clusters = []
     # switch x and y in clusters
-    clusters = [[(y,x) for (x,y) in cluster] for cluster in clusters]
-    # switch x and y in edges
     for edge in edges:
-        edge.end1.location = (edge.end1.location[1], edge.end1.location[0])
-        edge.end2.location = (edge.end2.location[1], edge.end2.location[0])
+        edge.cluster = [(y,x) for (x,y) in edge.cluster]
+        clusters.append(edge.cluster)
+    
+    # switch x and y in ends
+    for edge in edges:
+        for end in edge.ends:
+            end.location = (end.location[1], end.location[0])
 
     # create figure where cluster will be drawn
     fig = cv.cvtColor(np.full(shape, 255, dtype=np.uint8), cv.COLOR_GRAY2BGR)
 
     for color, cluster in enumerate(clusters):
-
         # draw lines between consecutive cluster points
         for i in range(len(cluster)-1):
             cv.line(fig, cluster[i], cluster[i+1], num_to_rgb(color,len(clusters)), 3, cv.LINE_AA)
 
-    # draw edges
-    for i in range(len(edges)):
-        # print ends ids of edge in their location
-        cv.putText(fig, edges[i].end1.id, edges[i].end1.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
-        cv.putText(fig, edges[i].end2.id, edges[i].end2.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
-
+    # draw ends ids and edge distances
+    for edge in edges:
+        for end in edge.ends:
+            # print ends ids of edge in their location
+            cv.putText(fig, end.id, end.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
         # print distance in the middle of the cluster
-        middle_idx = len(clusters[i])//2
-        middle = clusters[i][middle_idx]
-        cv.putText(fig, str(round(edges[i].distance, 2)), middle, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
+        middle_point = edge.cluster[len(edge.cluster)//2]
+        cv.putText(fig, str(round(edge.distance)), middle_point, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE/2, (0,0,0), 1, cv.LINE_AA)
      
     if title is None:
         title = str(len(edges)) + ' Edges'

@@ -7,8 +7,9 @@ from random import randint
 import os
 
 DEBUG_PRINT = False
-PLOT = False
+PLOT = True
 DRAW_RADIUS = 10
+TEXT_SIZE = 1.2
 
 ########################### DEBUG ###########################
 def outOfBorders(src, point):
@@ -197,3 +198,43 @@ def plotRelevantPoints(sk, starting_points, bif_points):
     fig = drawPoints(fig, bif_points, color=(0,255,0), radius=DRAW_RADIUS)
     myPlot(fig, title)
 
+def plotMap(map, title = None):
+    """plot map"""
+    if not PLOT:
+        return
+
+    shape = map.shape    
+    clusters = map.clusters
+    edges = map.edges
+
+    # switch x and y in clusters
+    clusters = [[(y,x) for (x,y) in cluster] for cluster in clusters]
+    # switch x and y in edges
+    for edge in edges:
+        edge.end1.location = (edge.end1.location[1], edge.end1.location[0])
+        edge.end2.location = (edge.end2.location[1], edge.end2.location[0])
+
+    # create figure where cluster will be drawn
+    fig = cv.cvtColor(np.full(shape, 255, dtype=np.uint8), cv.COLOR_GRAY2BGR)
+
+    for color, cluster in enumerate(clusters):
+
+        # draw lines between consecutive cluster points
+        for i in range(len(cluster)-1):
+            cv.line(fig, cluster[i], cluster[i+1], num_to_rgb(color,len(clusters)), 3, cv.LINE_AA)
+
+    # draw edges
+    for i in range(len(edges)):
+        # print ends ids of edge in their location
+        cv.putText(fig, edges[i].end1.id, edges[i].end1.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
+        cv.putText(fig, edges[i].end2.id, edges[i].end2.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
+
+        # print distance in the middle of the cluster
+        middle_idx = len(clusters[i])//2
+        middle = clusters[i][middle_idx]
+        cv.putText(fig, str(round(edges[i].distance, 2)), middle, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
+     
+    if title is None:
+        title = str(len(edges)) + ' Edges'
+
+    myPlot(fig, title)

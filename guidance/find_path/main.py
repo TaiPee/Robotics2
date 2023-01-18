@@ -1,8 +1,19 @@
+# %%
+
+import cv2 as cv
+import numpy as np
+import search as srch
+import image as img
+import my_search as my_srch
+
+# advise to set PLOT to True in debug_plot.py to visualize results of the pipeline
+import debug_plot as dbg 
+
 # list images available
-IMAGES = ['guidance/images/path1.jpg']
+IMAGES = ['images/path1.jpg' , 'images/path2.png']
 
 # index of images to to process inside IMAGES list (can process multiple images at once)
-IM_NUM = [0]
+IM_NUM = [1]
 PROCESS_IMG_NAMES = [IMAGES[i] for i in IM_NUM]    
 
 ############################################################################################
@@ -42,14 +53,6 @@ SCALE = 1 # scale of the image to draw
 INTER_CLUSTER_DIST = 30 # maximum distance between 2 clusters to be considered neighbors
 
 ########################### MAIN ###########################
-import cv2 as cv
-import numpy as np
-
-import search as srch
-import image as img
-
-# advise to set PLOT to True in debug_plot.py to visualize results of the pipeline
-import debug_plot as dbg 
 
 def main ():
 
@@ -71,6 +74,9 @@ def main ():
         # get clusters with ordered points
         clusters = img.getOrderedClusters(sk, bif_points, ERASE_BIF_RADIUS, MIN_DIST_CLUSTER, BIF_WINDOW_SIZE, MIN_BIF_NEIGHBORS, MIN_TAIL_SIZE)
         dbg.plotClusters(clusters, sk.shape)
+
+        map = my_srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
+        dbg.plotMap(map)
 
         ##########   SEARCH    ##########
 
@@ -105,7 +111,7 @@ def main ():
         # downsample path 
         points = img.downSampleClusters([points], MAX_POINTS)
         points = points[0]
-        
+
         if FILL_LINES:
             # calculate average distance between points
             avg_dist = np.mean([np.linalg.norm(np.array(points[i]) - np.array(points[i+1])) for i in range(len(points)-1)])

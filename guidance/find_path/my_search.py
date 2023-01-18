@@ -429,12 +429,12 @@ class Map:
 
         # name all ends with same locations with same id
         end_id = 'A'
-        self.unique_ends = set()
+        self.unique_ends = []
         for edge in self.edges:
             for end in edge.ends:
                 if end.id is None:
                     end.id = end_id
-                    self.unique_ends.add(end)
+                    self.unique_ends.append(end)
                     for other_edge in self.edges:
                         for other_end in other_edge.ends:
                             if other_end.id is None and other_end.location == end.location:

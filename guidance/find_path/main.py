@@ -69,30 +69,25 @@ def main ():
 
         # get starting and bifurcation points, erase short tails
         starting_points, bif_points, sk = img.getRelevantPoints(sk, BIF_WINDOW_SIZE, MIN_BIF_NEIGHBORS, MIN_TAIL_SIZE)
-        dbg.plotRelevantPoints(sk, starting_points=starting_points, bif_points=bif_points)
+        # dbg.plotRelevantPoints(sk, starting_points=starting_points, bif_points=bif_points)
 
         # get clusters with ordered points
         clusters = img.getOrderedClusters(sk, bif_points, ERASE_BIF_RADIUS, MIN_DIST_CLUSTER, BIF_WINDOW_SIZE, MIN_BIF_NEIGHBORS, MIN_TAIL_SIZE)
-        dbg.plotClusters(clusters, sk.shape)
-
-        map = my_srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
-        fixed_clusters = [edge.cluster for edge in map.edges]
-        dbg.plotClusters(fixed_clusters, sk.shape)
-        dbg.plotMap(map)
 
         ##########   SEARCH    ##########
 
-        _, curved_clusters = srch.separateClusters(clusters)
-        ends = srch.createEnds(clusters)
-        important_points = srch.orderRootNodes(ends,starting_points)
+        map = my_srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
+        fixed_clusters = [edge.cluster for edge in map.edges]
+        dbg.plotClusters(fixed_clusters, sk.shape, 'Fixed clusters (' + str(len(fixed_clusters)) + ')' ) 
+        dbg.plotMap(map)
 
-        matrix = srch.getAdjMatrix(ends, INTER_CLUSTER_DIST)
-
-        # search for path
-        ends_path = srch.getOrderedNodes(list(range(len(ends))),matrix,curved_clusters, important_points)
-
-        # create path with list of clusters that are in path_nodes
-        path = srch.createFinalPath(clusters,ends,ends_path)
+        start = map.graph.graph_dict[map.unique_ends[0].id]
+        end = map.graph.graph_dict[map.unique_ends[-1].id]
+        problem = my_srch.GraphProblem(start, end, map.graph)
+        
+        path = my_srch.astar_search(problem).path
+        
+        print('Path: ', path)
 
         #list of points in path, removing last point of each cluster (same as first point of next cluster)
         points = []
@@ -104,24 +99,16 @@ def main ():
         ########## SAVE .TXT TO PASS TO THE ROBOT ##########
             
         # save x and y coordinates of clusters in txt file in main folder
-        with open(filename.split('/')[-1].split('.')[0] + '.txt', 'w') as f:
-            for x,y in points:
-                y = sk.shape[1] - y
-                x,y = round(x*SCALE), round(y*SCALE)
-                f.write(str(y) + ' ' + str(x) + '\n') 
+        # with open(filename.split('/')[-1].split('.')[0] + '.txt', 'w') as f:
+        #     for x,y in points:
+        #         y = sk.shape[1] - y
+        #         x,y = round(x*SCALE), round(y*SCALE)
+        #         f.write(str(y) + ' ' + str(x) + '\n') 
         
-        # downsample path 
-        points = img.downSampleClusters([points], MAX_POINTS)
-        points = points[0]
-
-        if FILL_LINES:
-            # calculate average distance between points
-            avg_dist = np.mean([np.linalg.norm(np.array(points[i]) - np.array(points[i+1])) for i in range(len(points)-1)])
-            # fill lines between points
-            points = img.fillLines(points, avg_dist*AVG_DIST_F)
-
         # plot results
-        dbg.plotPoints(points, sk, gifname=filename.split('/')[-1].split('.')[0])
+        # dbg.plotPoints(points, sk, gifname=filename.split('/')[-1].split('.')[0])
              
 if __name__ == "__main__":
     main()
+
+# %%

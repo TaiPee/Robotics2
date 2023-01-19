@@ -9,6 +9,7 @@ class simul_handle():
         rospy.init_node('simul_node')
         # self.simul = 1
         self.simul = rospy.get_param("simul")
+        rospy.loginfo("Simul parameter: %d", self.simul)
         self.pipeline = simul_pipeline.simul_pipeline()
         self.advertise()
         self.subscribe()
@@ -38,11 +39,11 @@ class simul_handle():
         self.pipeline.runSimulation(self.simul)
         # Car Model
         if self.simul!=0:
+            rospy.loginfo("Publishing car states")
             self.pubCarStates.publish(self.pipeline.odom)
         # Visualization
         self.pubVisCar.publish(self.pipeline.carVis)
         self.pubVisRef.publish(self.pipeline.refPathVis)
-        self.pubVisLookAhead.publish(self.pipeline.lookAheadVis)
 
 
     # CALLBACKS
@@ -53,9 +54,7 @@ class simul_handle():
         # self.pipeline.setStatesAbstraction(throttle, steering)
 
     def carCommandCallback(self, data):
-        throttle = data.throttle
-        steering = data.steering
-        # self.pipeline.setStates(throttle, steering)
+        self.pipeline.setCarCommand(data)
 
     def sensorsCallback(self, data):
         self.pipeline.setSensorStates(data)

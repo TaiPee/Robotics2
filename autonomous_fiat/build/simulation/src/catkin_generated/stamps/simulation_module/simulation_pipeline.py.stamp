@@ -27,7 +27,9 @@ class Car:
         self.Length = rospy.get_param("car_parameters/Length")
         self.aero_drag = rospy.get_param("car_parameters/aero_drag")
         self.r_wheel = rospy.get_param("car_parameters/r_wheel")
-        self.Power = rospy.get_param("car_parameters/Power")
+        self.MaxTorque = rospy.get_param("car_parameters/MaxTorque")
+        self.GR = rospy.get_param("car_parameters/GR")
+        self.eta = rospy.get_param("car_parameters/eta")
 
 class simul_pipeline():
     def __init__(self):
@@ -35,11 +37,11 @@ class simul_pipeline():
         self.refPath = self.setReferencePath()
         self.refPathVis = self.setReferencePathMarkers()
         self.carVis = Marker()
-        self.lookAheadVis = Marker()
         self.odom = states()
         self.car = Car()
         self.controlCommand = control_command()
         self.carCommand = car_command()
+        
         
 
     def runSimulation(self,simul):
@@ -48,12 +50,11 @@ class simul_pipeline():
         elif simul == 1:
             self.setStatesAbstraction()
         elif simul == 2:
-            self.setStates()
+            self.setStatesThrottle()
         else:
             rospy.logerr("Simul parameter not set correctly")
 
         self.getCarVis()
-        # self.getLookAheadVis()
 
     def getCarVis(self):
         q = quaternion_from_euler(0,0,self.odom.Psi)
@@ -76,23 +77,6 @@ class simul_pipeline():
         self.carVis.color.a = 1.0
         self.carVis.color.b = 1.0
         self.carVis.lifetime = rospy.Duration()
-
-    # def getLookAheadVis(self):
-
-    #     self.lookAheadVis.header.frame_id = "/map"
-    #     self.lookAheadVis.header.stamp = rospy.Time.now()
-    #     self.lookAheadVis.type = self.lookAheadVis.SPHERE
-    #     self.lookAheadVis.id = 0
-    #     self.lookAheadVis.action = self.lookAheadVis.ADD
-    #     self.lookAheadVis.pose.position.x = self.odom.X
-    #     self.lookAheadVis.pose.position.y = self.odom.Y
-    #     self.lookAheadVis.pose.position.z = 0.0
-    #     self.lookAheadVis.scale.x = 0.1
-    #     self.lookAheadVis.scale.y = 0.1
-    #     self.lookAheadVis.scale.z = 0.1
-    #     self.lookAheadVis.color.a = 1.0
-    #     self.lookAheadVis.color.r = 1.0
-    #     self.lookAheadVis.lifetime = rospy.Duration()
 
     def setReferencePath(self):
         # Read YAML file
@@ -122,20 +106,27 @@ class simul_pipeline():
 
         return marker
 
-    def setStates(self):
+    def setStatesThrottle(self):
         throttle = self.carCommand.throttle
         steering = self.carCommand.steering
 
-        F = self.car.Power * throttle
-        Beta = math.atan(self.car.Lr*math.tan(steering)/self.car.L)
+        F = self.car.MaxTorque * 4 * self.car.GR / self.car.r_wheel * self.car.eta * throttle # Longitudinal Force
 
-        integrator_step = 0.02
+        rospy.loginfo("F: %f",F)
+
+        Beta = math.atan(self.car.Lr*math.tan(steering)/self.car.L) # Side Slip Angle
+
+        integrator_step = 0.02 # For Euler Integration
         
         self.odom.X = self.odom.X + (math.sqrt(self.odom.vx**2 + self.odom.vy**2)*math.cos(self.odom.Psi+Beta)) *integrator_step
         self.odom.Y = self.odom.Y + (math.sqrt(self.odom.vx**2 + self.odom.vy**2)*math.sin(self.odom.Psi+Beta)) *integrator_step
         self.odom.Psi = self.odom.Psi + (self.odom.vx/self.car.L)*math.tan(steering) *integrator_step
-        self.odom.vx = self.odom.vx + (F*math.cos(Beta)*integrator_step/self.m - 0.5*self.aero_drag*(self.odom.vx**2)) * integrator_step
-        self.odom.vy = self.odom.vy + (F*math.sin(Beta)/self.m) *integrator_step
+        velocity = math.sqrt(self.odom.vx**2 + self.odom.vy**2) + F/self.car.m *integrator_step
+        self.odom.vx = velocity*math.cos(Beta) #- 0.5*self.car.aero_drag*(self.odom.vx**2)
+        self.odom.vy = velocity*math.sin(Beta)
+        rospy.loginfo('vx: %f, vy: %f',self.odom.vx, self.odom.vy)
+
+        
 
     def setStatesAbstraction(self):
         velocity = self.controlCommand.velocity

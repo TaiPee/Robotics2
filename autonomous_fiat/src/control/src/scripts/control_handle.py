@@ -23,18 +23,19 @@ class control_handle():
         self.pubControlCommand = rospy.Publisher('/control_cmd_topic', control_command, queue_size=1)
         self.pubCarCommand = rospy.Publisher('/car_cmd_topic', car_command, queue_size=1)
         # VISUALIZATION
-        self.pubLooKAheadVis = rospy.Publisher('/lookAhead_vis_topic', Marker, queue_size=1)
+        self.pubLooKAheadLateralVis = rospy.Publisher('/lookAheadLateral_vis_topic', Marker, queue_size=1)
+        self.pubLooKAheadLongitudinalVis = rospy.Publisher('/lookAheadLongitudinal_vis_topic', Marker, queue_size=1)
 
     def run(self):
         self.pipeline.runAlgorithm()
         controlCmd = self.pipeline.getControlCmd()
         carCmd = self.pipeline.getCarCmd()
-        lookAheadMarker = self.pipeline.getLookAheadMarker()
+        lookAheadLateralMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_lateral_index,'lateral')
+        lookAheadLongitudinalMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_longitudinal_index,'longitudinal')
         self.pubControlCommand.publish(controlCmd)
         self.pubCarCommand.publish(carCmd)
-        self.pubLooKAheadVis.publish(lookAheadMarker)
-
-        
+        self.pubLooKAheadLateralVis.publish(lookAheadLateralMarker)
+        self.pubLooKAheadLongitudinalVis.publish(lookAheadLongitudinalMarker)
 
     def statesCallback(self, data):
         self.pipeline.setStates(data)

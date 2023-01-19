@@ -36,8 +36,13 @@ class control_pipeline():
         K = rospy.get_param("K")
         I = rospy.get_param("I")
         self.throttle_PID = control_pid.throttle_PID(K,I)
-        self.lookAheadTime = rospy.get_param("look_ahead_time")
         self.pathToRefPath = rospy.get_param("map_dir")
+        self.lookAheadTimeLateral = rospy.get_param("look_ahead_time_lateral")
+        self.lookAheadTimeLongitudinal = rospy.get_param("look_ahead_time_longitudinal")
+        self.maxSpeed = rospy.get_param("max_speed")
+        self.minSpeed = rospy.get_param("min_speed")
+        self.k_filter_1 = rospy.get_param("k_filter_1")
+        self.k_filter_2 = rospy.get_param("k_filter_2")
 
         # Variables
         self.states = States()
@@ -45,42 +50,51 @@ class control_pipeline():
         self.controlCmd = control_command()
         self.carCmd = car_command()
         self.refPath = self.setReferencePath(self.pathToRefPath)
-        self.maxSpeed = rospy.get_param("max_speed")
-        self.minSpeed = rospy.get_param("min_speed")
-        self.lookAheadTime = rospy.get_param("look_ahead_time")
-        self.look_ahead_point_index = 0
+        self.look_ahead_point_lateral_index = 0
+        self.look_ahead_point_longitudinal_index = 0
+        self.throttle_prev = 0.0
+        
+
 
     '''MAIN ALGORITHM'''
-
+    
     def runAlgorithm(self):
 
         # Get the nearest point in the path
         index = self.getNearestIndex()
-
+        
         # Get the look ahead point
-        self.look_ahead_point_index = self.getLookAheadPointIndex(index)
+        self.look_ahead_point_lateral_index = self.getLookAheadPointIndex(index,'lateral')
+        self.look_ahead_point_longitudinal_index = self.getLookAheadPointIndex(index,'longitudinal')
 
         # Angle between the car and the look ahead point and the distance between the 2 
-        [alpha,ld] = self.getAngleAndDist() 
+        [alpha_lateral,ld_lateral] = self.getAngleAndDist(self.look_ahead_point_lateral_index) 
+        [alpha_longitudinal,ld_longitudinal] = self.getAngleAndDist(self.look_ahead_point_lateral_index) 
 
-        # LATERAL CONTROLLER #
-
-        # Get the steering angle
-        delta = math.atan((2*self.car.L*math.sin(alpha))/ld)
+        """ LATERAL CONTROLLER """ 
+    
+        # Get the steering angle according to fiat punto
+        delta = np.clip(math.atan((2*self.car.L*math.sin(alpha_lateral))/ld_lateral),-0.61,0.61) #V Values from fiat punto model
 
         # Get steering to messages
         self.controlCmd.steering = delta
         self.carCmd.steering = delta
 
-        ## LONGITUDINAL CONTROLLER
+        """ LONGITUDINAL CONTROLLER """ 
 
         # Get the velocity reference
-        vel_ref = self.maxSpeed - (math.exp(abs(alpha)) - 1) * (self.maxSpeed - self.minSpeed)
-        rospy.loginfo("Velocity %f",vel_ref)
+        vel_ref = self.maxSpeed - (math.exp(abs(alpha_longitudinal)) - 1) * (self.maxSpeed - self.minSpeed)
+        # Guarantee end of track
+        if abs(alpha_longitudinal) >= np.pi/2:
+            vel_ref = 0
+
         self.controlCmd.velocity = vel_ref
 
         throttle = self.throttle_PID.calculateThrottle(vel_ref, math.sqrt(self.states.vx**2+self.states.vy**2))
-        self.carCmd.throttle = throttle
+        throttle = np.clip(throttle,-1.0,1.0)
+        self.carCmd.throttle = throttle * self.k_filter_1 + self.throttle_prev * (1 - self.k_filter_1)
+
+        self.throttle_prev = self.carCmd.throttle
 
     
     '''AUXILIARY FUNCTIONS'''
@@ -110,8 +124,14 @@ class control_pipeline():
         return closest_index
         
 
-    def getLookAheadPointIndex(self, index):
-        ref_distance = self.lookAheadTime * math.sqrt(self.states.vx**2+self.states.vy**2)
+    def getLookAheadPointIndex(self, index, type):
+        if type == 'lateral': #lateral
+            ref_distance = self.lookAheadTimeLateral * math.sqrt(self.states.vx**2+self.states.vy**2)
+        elif type == 'longitudinal': #longitudinal
+            ref_distance = self.lookAheadTimeLongitudinal * math.sqrt(self.states.vx**2+self.states.vy**2)
+        else:
+            rospy.logerr("Type of look ahead point not defined")
+            return -1
         walking_path = 0
         final_index = len(self.refPath)-1
         pos = self.refPath[index]
@@ -124,22 +144,27 @@ class control_pipeline():
                 return final_index
         return final_index
 
-    def getAngleAndDist(self):
-        final_index = self.look_ahead_point_index
+    def getAngleAndDist(self, look_ahead_point_index):
+        final_index = look_ahead_point_index
         actual_pos = [self.states.X, self.states.Y]
         yaw = self.states.Psi
         yaw_normalize = [np.cos(yaw), np.sin(yaw)]
         ld = [self.refPath[final_index,0]-actual_pos[0], 
             self.refPath[final_index,1]-actual_pos[1]]
         ld_normalize = normalize(ld)
-        alpha = np.arccos(np.dot(yaw_normalize, ld_normalize))
+
+        # alpha = np.arccos(np.dot(yaw_normalize, ld_normalize))
+        num = np.cross(yaw_normalize, ld_normalize)
+        den = np.dot(yaw_normalize, ld_normalize)
+        alpha = np.arctan2(num, den)
+
         distance = np.linalg.norm(ld)
         
         return [alpha,distance]
 
     '''VISUALIZATION FUNCTIONS'''    
 
-    def getLookAheadMarker(self):
+    def getLookAheadMarker(self, look_ahead_point_index, type):
         marker = Marker()
         marker.header.frame_id = "/map"
         marker.id = 1
@@ -150,12 +175,18 @@ class control_pipeline():
         marker.scale.y = 0.5
         marker.scale.z = 0.5
         marker.color.a = 1.0
-        marker.color.r = 1.0
         marker.color.g = 0.0
-        marker.color.b = 0.0
+        if type == 'lateral':
+            marker.color.r = 1.0
+            marker.color.b = 0.0
+        elif type == 'longitudinal':
+            marker.color.r = 0.0
+            marker.color.b = 0.5
+        else:
+            rospy.logerr("Type of look ahead point not defined")
         marker.pose.orientation.w = 1.0
-        marker.pose.position.x = self.refPath[self.look_ahead_point_index,0]
-        marker.pose.position.y = self.refPath[self.look_ahead_point_index,1]
+        marker.pose.position.x = self.refPath[look_ahead_point_index,0]
+        marker.pose.position.y = self.refPath[look_ahead_point_index,1]
         marker.pose.position.z = 0.0
         marker.lifetime = rospy.Duration()
         return marker

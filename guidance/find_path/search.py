@@ -1,236 +1,264 @@
-import collections
-import math
+
 import numpy as np
+import heapq
+import math
 
-# print depth of search tree
-PRINT_DEPTH = False
+def euclidean(a, b):
+    x1, y1 = a
+    x2, y2 = b
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-# if false, search will also accept solutions that go back in curved lines
-GO_BACK_IN_STRAIGHTS = True
+class Graph:
+    """A graph connects nodes (vertices) by edges (links). Each edge can also
+    have a length associated with it. The constructor call is something like:
+        g = Graph({'A': {'B': 1, 'C': 2})
+    this makes a graph with 3 nodes, A, B, and C, with an edge of length 1 from
+    A to B,  and an edge of length 2 from A to C. You can also do:
+        g = Graph({'A': {'B': 1, 'C': 2}, directed=False)
+    This makes an undirected graph, so inverse links are also added. The graph
+    stays undirected; if you add more links with g.connect('B', 'C', 3), then
+    inverse link is also added. You can use g.nodes() to get a list of nodes,
+    g.get('A') to get a dict of links out of A, and g.get('A', 'B') to get the
+    length of the link from A to B. 'Lengths' can actually be any object at
+    all, and nodes can be any hashable object."""
 
-# if there are more than this clusters, GO_BACK_IN_STRAIGHS is set to False
-GO_BACK_IN_STRAIGHTS_THRESHOLD = 7
+    def __init__(self, graph_dict=None, directed=True):
+        self.graph_dict = graph_dict or {}
+        self.locations_dict = {}
+        self.directed = directed
+        if not directed:
+            self.make_undirected()
 
-# number of times the robot can go back through the cluster
-MAX_GO_BACK = 2
+    def make_undirected(self):
+        """Make a digraph into an undirected graph by adding symmetric edges."""
+        for a in list(self.graph_dict.keys()):
+            for (b, dist) in self.graph_dict[a].items():
+                self.connect1(b, a, dist)
 
-class Node:
-    """A node in a search tree. Contains a pointer to the parent (the node
-    that this is a successor of) and to the actual state for this node. Note
-    that if a state is arrived at by two paths, then there are two nodes with
-    the same state. Also includes the total path_cost to reach the node."""
+    def connect(self, A, B, distance=1):
+        """Add a link from A and B of given distance, and also add the inverse
+        link if the graph is undirected."""
+        self.connect1(A, B, distance)
+        if not self.directed:
+            self.connect1(B, A, distance)
 
-    def __init__(self, state, parent=None, path_cost=0):
-        """Create a search tree Node, derived from a parent"""
-        self.state = state
-        self.parent = parent
-        self.path_cost = path_cost
-        self.depth = 0
-        if parent:
-            self.depth = parent.depth + 1
+    def connect1(self, A, B, distance):
+        """Add a link from A to B of given distance, in one direction only."""
+        self.graph_dict.setdefault(A, {})[B] = distance
 
-    def __repr__(self):
-        return "<Node {}>".format(self.state)
+    def get(self, a, b=None):
+        """Return a link distance or a dict of {node: distance} entries.
+        .get(a,b) returns the distance or None;
+        .get(a) returns a dict of {node: distance} entries, possibly {}."""
+        links = self.graph_dict.setdefault(a, {})
+        if b is None:
+            return links
+        else:
+            return links.get(b)
 
-    def __lt__(self, node):
-        return self.state < node.state
+    def nodes(self):
+        """Return a list of nodes in the graph."""
+        s1 = set([k for k in self.graph_dict.keys()])
+        s2 = set([k2 for v in self.graph_dict.values() for k2, v2 in v.items()])
+        nodes = s1.union(s2)
+        return list(nodes)
+    
+    def neighbors(self, node):
+        return self.graph_dict[node].keys()
 
-    def expand(self, matrix):
-        """List the nodes reachable in one step from this node."""
+    def cost(self, a, b):
+        return self.graph_dict[a][b]
         
-        sequence = self.path()
-        current_path = [node.state for node in sequence]
-        duplicates = [item for item, count in collections.Counter(current_path).items() if count > MAX_GO_BACK]
+    def heuristic(self, a, b):
+        return euclidean(self.locations_dict[a], self.locations_dict[b])
 
-        if len(duplicates) > 0:
-            return []
-
-        idx = round(self.state)
-        children = []
-        if self.parent != None:
-            before = round(self.parent.state)
-            if idx % 2 == 0 and before != idx + 1:
-                children.append(Node(idx + 1, self, self.path_cost + 1))
-                return children
-            elif idx % 2 != 0 and before != idx - 1:
-                children.append(Node(idx - 1, self, self.path_cost + 1))
-                return children
-
-        neighbours = []
+# Create map from clusters
+class End:
+    def __init__(self, location, end_id = None, group_id = None):
+        self.location = location
+        self.group_id = group_id
+        self.id = end_id 
+class Edge:
+    def __init__(self, cluster):
+        self.ends = [End(cluster[0]), End(cluster[-1])]
+        self.distance = sum([math.dist(cluster[i], cluster[i+1]) for i in range(len(cluster)-1)]) 
+        self.cluster = cluster
+        self.bad = False
+class Map:
+    def __init__(self, clusters, neighbor_cluster_dist, plot_shape):
         
-        for i in range(len(matrix)):
-            if i == idx:
-                continue
-            elif matrix[idx,i]:
-                neighbours.append(i)
-        for neighbour in neighbours:
-            children.append(Node(neighbour, self, self.path_cost + 1))
-        return children
+        # store unique ends
+        self.unique_ends = []
 
-    def solution(self):
-        """Return the sequence of actions to go from the root to this node."""
-        return [node.action for node in self.path()[1:]]
+        # aglomerate ends closer than neighbor_cluster_dist to same point
+        self.fixEnds(clusters, neighbor_cluster_dist)
 
-    def path(self):
-        """Return a list of nodes forming the path from the root to this node."""
-        node, path_back = self, []
-        while node:
-            path_back.append(node)
-            node = node.parent
-        return list(reversed(path_back))
+        # get edges, removing edges that have same ends, but are longer, to bad_edges
+        self.edges, self.bad_edges = self.separateEdges(clusters)
+        
+        # get graph class from edges to use in search
+        self.graph = self.getGraph()
 
-def intercluster_distance(c1,c2):
-    """computes the distance between two clusters, in this case, two end points"""
-    return math.dist(np.array(c1), np.array(c2))
-
-def getAdjMatrix(ends, inter_cluster_dist):
-    """computes the adjacency matrix between nodes in the tree"""
-
-    matrix = np.zeros((len(ends), len(ends)))
-
-    for i in range(len(ends)):
-        if i%2 == 0:
-            # nodes from the same cluster are adjacent
-            matrix[i,i+1] = 1.0
-            matrix[i+1,i] = 1.0
-        for j in range(i,len(ends)):
-            if i == j:
-                # a node is adjacent to itself
-                matrix[i,i] = 1.0
-            elif intercluster_distance(ends[i],ends[j]) < inter_cluster_dist:
-                # adjacent nodes from different clusters
-                matrix[i,j] = 1.0
-                matrix[j,i] = 1.0
+        # store plot shape for plotting
+        self.plot_shape = plot_shape
     
-    return matrix
+    def sameEnds(self, edge1, edge2):
+        return edge1.ends[0].location == edge2.ends[0].location and edge1.ends[1].location == edge2.ends[1].location
 
-def goalTest(sequence, curved_points, nr_nodes):
-    """checks if the current path is a goal path"""
-    idx = [node.state for node in sequence]
+    def sortedEdgeLocs(self, edge):
+        return tuple(sorted([edge.ends[0].location, edge.ends[1].location]))
 
-    if PRINT_DEPTH:
-        print(len(idx))
+    def separateEdges(self, clusters):
+        
+        # all edges
+        all_edges = [Edge(cluster) for cluster in clusters]
 
-    if sequence == None:
-        return False
-    
-    if GO_BACK_IN_STRAIGHTS:
-        # list of duplicates
-        duplicates = [item for item, count in collections.Counter(idx).items() if count > 1]
+        # name all ends with same locations with same id
+        end_id = 'A'
+        unique_ends = {}
+        shorter_edges = {}
 
-        # there can only be duplicates from straight clusters
-        if any(i in duplicates for i in curved_points):
-            return False
-    
-    # every node must be in the path
-    for i in range(nr_nodes):
-        if i not in idx:
-            return False
-            
-    return True
-
-def getOrderedNodes(nodes, matrix, curved_points, important_points):
-    """apply bfs in the nodes to find the path to draw"""
-    lowest_path = 7+len(nodes)
-    final_node = None
-    for i in important_points:
-
-        frontier = collections.deque([Node(i)])  # FIFO queue
-
-        while frontier:
-            node = frontier.popleft()
-            if goalTest(node.path(), curved_points, len(nodes)) and node.path_cost < lowest_path:
-                final_node =  node
-                frontier.clear()
-                break
-            frontier.extend(node.expand(matrix))
-            if node.depth > lowest_path:
-                frontier.clear()
-                break
-        if final_node != None:
-            frontier.clear()
-            break
-
-    if final_node == None:
-        return None
-    else:
-        final_path = []
-        for node in node.path():
-            final_path.append(node.state)
-        return final_path
-    
-
-    ########################### PATH SEARCH ###########################
-
-def isStraightCluster(cluster):
-    """return if cluster is straight or not"""
-    
-    # if cluster was downsample to 2 points, it's straight
-    if len(cluster) == 2:
-        return True
-    else:
-        return False
-
-def separateClusters(clusters):
-    """separate straight from curved clusters"""
-    straight_clusters = []
-    curved_clusters = []
-
-    # if there are too many clusters, assume all are straight search wise
-    # this is because the search algorithm is not efficient enough to find 
-    # a path only going back in straigh clusters with too many clusters 
-    if len(clusters) > GO_BACK_IN_STRAIGHTS_THRESHOLD:
-        straight_clusters = [i for i in range(2*len(clusters))]
-    else:
-        for i in range(0,2*len(clusters),2):
-                if isStraightCluster(clusters[round(i/2)]):
-                    straight_clusters.append(i)
-                    straight_clusters.append(i+1)
+        # create dict of minimal distance between two equal ends: shorter_edges = {end1,end2: min_distance...}
+        for edge in all_edges:
+            edge_locs = self.sortedEdgeLocs(edge)
+            if edge_locs not in shorter_edges:
+                shorter_edges[edge_locs] = edge.distance
+            else:
+                if shorter_edges[edge_locs] > edge.distance:
+                    shorter_edges[edge_locs] = edge.distance
+            # create dict of unique ends and give them a unique id: unique_ends = {end.location: end.id... }
+            for end in edge.ends:
+                if end.location not in unique_ends:
+                    end.id = end_id
+                    self.unique_ends.append(end)
+                    unique_ends[end.location] = end_id
+                    end_id = chr(ord(end_id) + 1)
                 else:
-                    curved_clusters.append(i)
-                    curved_clusters.append(i+1)
-    
-    # if there are no straight clusters, assume all are straight search wise
-    if len(straight_clusters) == 0:
-        straight_clusters = curved_clusters.copy()
-        curved_clusters.clear()
-    
-    return straight_clusters, curved_clusters
-
-def orderRootNodes(ends, starting_points):
-    """returns an ordered list that will be used as root nodes"""
-    important_points = []
-
-    for i in range(len(ends)):
-            if ends[i] in starting_points:
-                important_points.append(i)
-
-    for i in range(len(ends)):
-        if i not in important_points:
-            important_points.append(i)
-    
-    return important_points
-    
-def createEnds(clusters):
-    """returns the ending points of clusters"""
-    ends = []
-    for cluster in clusters:
-        ends.append(cluster[0])
-        ends.append(cluster[-1])
-    return ends
+                    end.id = unique_ends[end.location]
         
-def createFinalPath(clusters,ends, ends_path):
-    """create list of clusters [path] from list of cluster ends [ends], with order given by [ends_path]"""
+        # remove edges with same ends, but longer. name ends with same location with same id
+        for edge in all_edges:
+            edge_locs = self.sortedEdgeLocs(edge)
+            if shorter_edges[edge_locs] < edge.distance:
+                edge.bad = True
+            for end in edge.ends:
+                end.id = unique_ends[end.location]
 
-    path = []
-    for i in range(len(ends_path)-1):
+        # separate edges into good and bad
+        good_edges = [edge for edge in all_edges if not edge.bad]
+        bad_edges = [edge for edge in all_edges if edge.bad]
+
+        return good_edges, bad_edges
+
+    def fixEnds(self, clusters, neighbor_cluster_dist):
+        """if there are ends closer than neighbor_cluster_dist, 
+        the ends are replaced by the center of mass of both"""
+
+        # get ends in single list
+        ends = []
         for cluster in clusters:
-            if cluster[0] == ends[ends_path[i]] and cluster[-1] == ends[ends_path[i+1]]:
-                path.append(cluster)
-                break
-            elif cluster[-1] == ends[ends_path[i]] and cluster[0] == ends[ends_path[i+1]]:          
-                path.append(cluster[::-1])
-                break
+            ends.append(End(cluster[0]))
+            ends.append(End(cluster[-1]))
+
+        # get groups of ends closer than neighbor_cluster_dist
+        group_ids = []
+        for i in range(len(ends)):
+            for j in range(i+1, len(ends)):
+                if math.dist(ends[i].location, ends[j].location) < neighbor_cluster_dist:
+                    if ends[i].group_id is not None:
+                        ends[j].group_id = ends[i].group_id
+                    else:
+                        ends[i].group_id = i
+                        ends[j].group_id = i
+                        group_ids.append(i)
+
+        # replace ends by center of mass
+        for group_id in group_ids:
+            group = [end for end in ends if end.group_id == group_id]
+            center_of_mass = self.centerOfMass(group)
+            for end in group:
+                end.location = center_of_mass
+
+        # replace ends in clusters
+        for i in range(len(clusters)):
+            clusters[i][0] = ends[2*i].location
+            clusters[i][-1] = ends[2*i+1].location
     
-    return path
+    def centerOfMass(self, list_of_ends):
+        """returns the center of mass of a list of Ends"""
+        x = sum([end.location[0] for end in list_of_ends])
+        y = sum([end.location[1] for end in list_of_ends])
+        return (int(round(x/len(list_of_ends))), int(round(y/len(list_of_ends))))
+
+    def getGraph(self):
+        """returns a Graph of the edges in the map"""
+
+        graph = Graph(graph_dict=None, directed=False)
+        for edge in self.edges:
+            graph.connect(edge.ends[0].id, edge.ends[1].id, edge.distance)
+        
+        for end in self.unique_ends:
+            graph.locations_dict[end.id] = end.location
+
+        return graph
+# Search
+def a_star(graph, start, goal):
+    frontier = [(0, start)]  # heap of (f_cost, node)
+    came_from = {}  # mapping of node to its parent in the path
+    g_cost = {start: 0}  # mapping of node to g_cost (cost to reach node from start)
+    f_cost = {start: graph.heuristic(start, goal)}  # mapping of node to f_cost (g_cost + heuristic cost to goal)
+
+    while frontier:
+        current = heapq.heappop(frontier)[1]  # get node with lowest f_cost
+
+        if current == goal:
+            # construct path and return it
+            path = [current]
+            while current in came_from:
+                current = came_from[current]
+                path.append(current)
+            return path[::-1]
+
+        for neighbor in graph.neighbors(current):
+            # calculate cost to reach neighbor from start
+            cost = g_cost[current] + graph.cost(current, neighbor)
+
+            if neighbor not in g_cost or cost < g_cost[neighbor]:
+                # update g_cost and add neighbor to frontier
+                g_cost[neighbor] = cost
+                f_cost[neighbor] = cost + graph.heuristic(neighbor, goal)
+                heapq.heappush(frontier, (f_cost[neighbor], neighbor))
+                came_from[neighbor] = current
+
+def getPointsFromPath(path, map):
+    edges = map.edges
+    points = []
+    for i in range(len(path)-1):
+        for edge in edges:
+            if (edge.ends[0].id == path[i] and edge.ends[1].id == path[i+1]): 
+                points.extend(edge.cluster)
+                break
+            elif (edge.ends[0].id == path[i+1] and edge.ends[1].id == path[i]):
+                points.extend(edge.cluster[::-1])
+                break
+    return points
+
+def getStartEndIDs(map,start_point, end_point):
+    """get start and end ids from map.unique_ends that are 
+    closest to start_point and end_point"""
+    start_id = None
+    end_id = None
+    start_dist = np.inf
+    end_dist = np.inf
+    for end in map.unique_ends:
+        dist = math.dist(end.location, start_point)
+        if dist < start_dist:
+            start_dist = dist
+            start_id = end.id
+        dist = math.dist(end.location, end_point)
+        if dist < end_dist:
+            end_dist = dist
+            end_id = end.id
+    
+    return start_id, end_id
 

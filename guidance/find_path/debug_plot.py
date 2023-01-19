@@ -5,11 +5,15 @@ import math
 import imageio.v2 as imageio
 from random import randint
 import os
+from copy import deepcopy
 
 DEBUG_PRINT = False
 PLOT = True
 DRAW_RADIUS = 10
 TEXT_SIZE = 1.2
+POINTS_SIZE = 2
+GIF_POINTS = 50
+NO_GIF_POINTS = 150
 
 ########################### DEBUG ###########################
 def outOfBorders(src, point):
@@ -146,49 +150,75 @@ def plotClusters(clusters, shape, title=None, draw_points = False, pointRadius =
         title = str(len(clusters)) + ' Clusters'
     myPlot(fig, title)
 
-def plotPoints(points, sk, gifname = 'trajectory', remove_files = True):
+def plotPoints(map, original_points, start_id, end_id, img_name, save_name = 'trajectory', gif = False, remove_files = True):
     """plot points on image and save trajectory as a gif."""
 
-    filenames = ['sk.png']
-    plt.imshow(sk, cmap='gray_r')
-    plt.savefig(filenames[0])
+    
+    if gif:
+        n_points = GIF_POINTS
+    else:
+        n_points = NO_GIF_POINTS
+    # downsample points for speed (if gif, even more)
+    points = [original_points[i] for i in range(0, len(original_points), int(len(original_points) / n_points))]
 
+    # plot image represented in file img_name as background in plt object
+    img = cv.imread(img_name)
+    plt.imshow(img)
+    
+    for end in map.unique_ends:
+        # plot ends ids in their location
+        y,x = end.location
+        plt.text(x, y, end.id, color='blue')
+
+    plt.title('Trajectory from ' + str(start_id) + ' to ' + str(end_id))
+
+    filenames = ['original.png']
+    if gif:
+        plt.savefig(filenames[0])
+
+    color = 'red'
     for i,(y,x) in enumerate(points):
         filename = f'{i}.png'
         filenames.append(filename)
-        a,b,c = num_to_rgb(i, len(points))
-        plt.scatter( x, y, c =  np.array([[a, b, c]])/255.0)
-        plt.savefig(filename)
-        # plt.pause(0.01)
-        i+=1
+        # plot points with size 1
+        plt.scatter( x, y, c = color, s=POINTS_SIZE)
+        if gif:
+            plt.savefig(filename)
+
 
     if PLOT:
-        plt.title('Points')
         plt.show()
 
     # build gif
-    with imageio.get_writer(gifname + '.gif', mode='I') as writer:
-        for filename in filenames:
-            image = imageio.imread(filename)
-            writer.append_data(image)         
-    # remove files
-    if remove_files:
-        for filename in set(filenames):
-            os.remove(filename)
-    
+    if gif:
+        with imageio.get_writer(save_name + '.gif', mode='I') as writer:
+            for filename in filenames:
+                image = imageio.imread(filename)
+                writer.append_data(image)         
+        # remove files
+        if remove_files:
+            for filename in set(filenames):
+                os.remove(filename)
+    else:
+        plt.savefig(save_name + '.png')
+        
     plt.close()
 
-def myPlot(src, title, cmap='gray_r'):
+def myPlot(src, title, cmap='gray_r', save_name = None):
     """plot image"""
 
-    if not PLOT:
-        return
-    if src is not None:
+    if src is not None and PLOT:
         plt.imshow(src, cmap=cmap)
         plt.title(title)
         plt.show()
+        if save_name is not None:
+            plt.imsave(save_name+'.png', src, cmap=cmap)
+    elif src is not None and save_name is not None:
+        plt.imshow(src, cmap=cmap)
+        plt.title(title)
+        plt.imsave(save_name+'.png', src, cmap=cmap)
 
-def plotRelevantPoints(sk, starting_points, bif_points):
+def plotRelevantPoints(sk, starting_points, bif_points, start_point, end_point):
     """plot relevant points in skeleton"""
     if not PLOT:
         return
@@ -196,25 +226,37 @@ def plotRelevantPoints(sk, starting_points, bif_points):
     title = str(len(starting_points)) + ' Start, ' + str(len(bif_points)) + ' Bif'
     fig = drawPoints(cv.cvtColor(255 - sk, cv.COLOR_GRAY2BGR), starting_points, color=(0,0,255), radius=DRAW_RADIUS)
     fig = drawPoints(fig, bif_points, color=(0,255,0), radius=DRAW_RADIUS)
+
+    # draw start and end points with purple and red color
+    fig = drawPoints(fig, [start_point], color=(255,0,255), radius=DRAW_RADIUS)
+    fig = drawPoints(fig, [end_point], color=(0,100,0), radius=DRAW_RADIUS)
+    
     myPlot(fig, title)
 
-def plotMap(map, title = None):
+def plotMap(map, title = None, save_name = None):
     """plot map"""
     if not PLOT:
         return
 
-    edges = map.edges.copy()
-    shape = map.plot_shape    
+    all_edges = deepcopy(map.edges)
+    all_edges.extend(deepcopy(map.bad_edges))
+
     clusters = []
-    # switch x and y in clusters
-    for edge in edges:
+    shape = map.plot_shape
+
+    # switch x and y in clusters and ends locations
+    for edge in all_edges:
         edge.cluster = [(y,x) for (x,y) in edge.cluster]
         clusters.append(edge.cluster)
-    
-    # switch x and y in ends
-    for edge in edges:
         for end in edge.ends:
             end.location = (end.location[1], end.location[0])
+
+    # separate good and bad eges, good and bad clusters
+    bad_edges = all_edges[len(map.edges):]
+    edges = all_edges[0:len(map.edges)]
+    bad_clusters = clusters[len(map.edges):]
+    clusters = clusters[0:len(map.edges)]
+
 
     # create figure where cluster will be drawn
     fig = cv.cvtColor(np.full(shape, 255, dtype=np.uint8), cv.COLOR_GRAY2BGR)
@@ -223,9 +265,16 @@ def plotMap(map, title = None):
         # draw lines between consecutive cluster points
         for i in range(len(cluster)-1):
             cv.line(fig, cluster[i], cluster[i+1], num_to_rgb(color,len(clusters)), 3, cv.LINE_AA)
+    
+    # draw bad clusters in gray
+    color = (128,128,128)
+    for cluster in bad_clusters:
+        # draw lines between consecutive cluster points
+        for i in range(len(cluster)-1):
+            cv.line(fig, cluster[i], cluster[i+1], color, 3, cv.LINE_AA)
 
     # draw ends ids and edge distances
-    for edge in edges:
+    for edge in all_edges:
         for end in edge.ends:
             # print ends ids of edge in their location
             cv.putText(fig, end.id, end.location, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE, (0,0,0), 1, cv.LINE_AA)
@@ -234,6 +283,18 @@ def plotMap(map, title = None):
         cv.putText(fig, str(round(edge.distance)), middle_point, cv.FONT_HERSHEY_SIMPLEX, TEXT_SIZE/2, (0,0,0), 1, cv.LINE_AA)
      
     if title is None:
-        title = str(len(edges)) + ' Edges'
+        title = str(len(edges)) + ' Edges, ' + str(len(bad_edges)) + ' Bad Edges (gray)'
 
-    myPlot(fig, title)
+    myPlot(fig, title, save_name = save_name)
+
+def recordClick(filename, text):
+    # record click on image and return x,y coordinates with fixed axis
+    image = plt.imread(filename)
+    plt.title(text)
+    plt.imshow(image)
+    a = plt.ginput(1)
+    y,x = a[0]
+    
+    plt.close()
+
+    return int(round(x)), int(round(y))

@@ -2,3 +2,4 @@
 /guidance/find_path/__pycache__/
 /guidance/find_path/images/*_path.png
 /guidance/find_path/images/*.txt
+/guidance/find_path/images/*.gif

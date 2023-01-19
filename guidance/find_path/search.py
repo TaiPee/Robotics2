@@ -2,7 +2,6 @@
 import numpy as np
 import heapq
 import math
-from copy import deepcopy
 
 def euclidean(a, b):
     x1, y1 = a
@@ -84,6 +83,7 @@ class Edge:
         self.ends = [End(cluster[0]), End(cluster[-1])]
         self.distance = sum([math.dist(cluster[i], cluster[i+1]) for i in range(len(cluster)-1)]) 
         self.cluster = cluster
+        self.bad = False
 class Map:
     def __init__(self, clusters, neighbor_cluster_dist, plot_shape):
         
@@ -105,26 +105,49 @@ class Map:
     def sameEnds(self, edge1, edge2):
         return edge1.ends[0].location == edge2.ends[0].location and edge1.ends[1].location == edge2.ends[1].location
 
+    def sortedEdgeLocs(self, edge):
+        return tuple(sorted([edge.ends[0].location, edge.ends[1].location]))
+
     def separateEdges(self, clusters):
+        
+        # all edges
+        all_edges = [Edge(cluster) for cluster in clusters]
 
-        edges = [Edge(cluster) for cluster in clusters]
-        original_edges = deepcopy(edges)
-        good_edges = []
-        bad_edges = []
+        # name all ends with same locations with same id
+        end_id = 'A'
+        unique_ends = {}
+        shorter_edges = {}
 
-        # signal edges that have same ends, but are longer, putting them in bad_edges
-        for i in range(len(edges)):
-            for j in range(i+1, len(edges)):
-                if self.sameEnds(edges[i], edges[j]):
-                    if edges[i].distance > edges[j].distance:
-                        bad_edges.append(original_edges[i])
-                        edges[i].distance = np.inf
-                    else:
-                        bad_edges.append(original_edges[j])
-                        edges[j].distance = np.inf
+        # create dict of minimal distance between two equal ends: shorter_edges = {end1,end2: min_distance...}
+        for edge in all_edges:
+            edge_locs = self.sortedEdgeLocs(edge)
+            if edge_locs not in shorter_edges:
+                shorter_edges[edge_locs] = edge.distance
+            else:
+                if shorter_edges[edge_locs] > edge.distance:
+                    shorter_edges[edge_locs] = edge.distance
+            # create dict of unique ends and give them a unique id: unique_ends = {end.location: end.id... }
+            for end in edge.ends:
+                if end.location not in unique_ends:
+                    end.id = end_id
+                    self.unique_ends.append(end)
+                    unique_ends[end.location] = end_id
+                    end_id = chr(ord(end_id) + 1)
+                else:
+                    end.id = unique_ends[end.location]
+        
+        # remove edges with same ends, but longer. name ends with same location with same id
+        for edge in all_edges:
+            edge_locs = self.sortedEdgeLocs(edge)
+            if shorter_edges[edge_locs] < edge.distance:
+                edge.bad = True
+            for end in edge.ends:
+                end.id = unique_ends[end.location]
 
-        # remove bad edges
-        good_edges = [edge for edge in edges if edge.distance != np.inf]
+        # separate edges into good and bad
+        good_edges = [edge for edge in all_edges if not edge.bad]
+        bad_edges = [edge for edge in all_edges if edge.bad]
+
         return good_edges, bad_edges
 
     def fixEnds(self, clusters, neighbor_cluster_dist):
@@ -170,20 +193,6 @@ class Map:
     def getGraph(self):
         """returns a Graph of the edges in the map"""
 
-        # name all ends with same locations with same id
-        end_id = 'A'
-        self.unique_ends = []
-        for edge in self.edges:
-            for end in edge.ends:
-                if end.id is None:
-                    end.id = end_id
-                    self.unique_ends.append(end)
-                    for other_edge in self.edges:
-                        for other_end in other_edge.ends:
-                            if other_end.id is None and other_end.location == end.location:
-                                other_end.id = end_id
-                    end_id = chr(ord(end_id) + 1)
-                    
         graph = Graph(graph_dict=None, directed=False)
         for edge in self.edges:
             graph.connect(edge.ends[0].id, edge.ends[1].id, edge.distance)
@@ -192,7 +201,6 @@ class Map:
             graph.locations_dict[end.id] = end.location
 
         return graph
-        
 # Search
 def a_star(graph, start, goal):
     frontier = [(0, start)]  # heap of (f_cost, node)
@@ -227,8 +235,30 @@ def getPointsFromPath(path, map):
     points = []
     for i in range(len(path)-1):
         for edge in edges:
-            if edge.ends[0].id == path[i] and edge.ends[1].id == path[i+1]:
+            if (edge.ends[0].id == path[i] and edge.ends[1].id == path[i+1]): 
                 points.extend(edge.cluster)
                 break
-    
+            elif (edge.ends[0].id == path[i+1] and edge.ends[1].id == path[i]):
+                points.extend(edge.cluster[::-1])
+                break
     return points
+
+def getStartEndIDs(map,start_point, end_point):
+    """get start and end ids from map.unique_ends that are 
+    closest to start_point and end_point"""
+    start_id = None
+    end_id = None
+    start_dist = np.inf
+    end_dist = np.inf
+    for end in map.unique_ends:
+        dist = math.dist(end.location, start_point)
+        if dist < start_dist:
+            start_dist = dist
+            start_id = end.id
+        dist = math.dist(end.location, end_point)
+        if dist < end_dist:
+            end_dist = dist
+            end_id = end.id
+    
+    return start_id, end_id
+

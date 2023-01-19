@@ -238,3 +238,15 @@ def fillLines(points, min_dist):
     filled_points.append(points[-1])
 
     return filled_points
+
+########################### GET START AND END POINTS ###########################
+
+def getClosestPoint(start_point, end_point, sk):
+    """get closest points in skeleton to start and end points"""
+    points = [(x,y) for x,y in np.argwhere(sk>0)]
+
+    # get distances to all points
+    start_distances = [np.linalg.norm(np.array(start_point)-np.array(p)) for p in points]
+    end_distances = [np.linalg.norm(np.array(end_point)-np.array(p)) for p in points]
+
+    return points[np.argmin(start_distances)], points[np.argmin(end_distances)]

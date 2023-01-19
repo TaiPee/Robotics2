@@ -1,0 +1,25 @@
+# PID parameters
+K: 10.0
+I: 1.0
+
+# Controller
+look_ahead_time: 1.0
+max_speed: 6.0
+min_speed: 1.0
+
+# Map Directory
+map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/trackdrive.yaml
+
+# Simulation
+simul: 1 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
+car_parameters:
+  L: 2.46
+  Lf: 0.74
+  Lr: 0.6
+  m: 1190
+  g: 9.81
+  Width: 1.66
+  Length: 3.8
+  aero_drag: 0.34
+  r_wheel: 0.292
+  Power: 145 #Nm

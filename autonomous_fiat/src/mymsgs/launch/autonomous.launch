@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find control_module)/launch/control.launch"/>
+    <include file="$(find simulation_module)/launch/simulation.launch"/>
+</launch>

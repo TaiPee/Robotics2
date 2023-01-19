@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(control_module)
+project(simulation_module)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   rospy
   std_msgs
+  visualization_msgs
+  mymsgs_module
 )
 
 ## System dependencies are found with CMake's conventions
@@ -49,8 +51,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  states.msg
-  control_command.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -71,6 +71,7 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
+  visualization_msgs
 )
 
 ################################################
@@ -192,7 +193,7 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-catkin_install_python(PROGRAMS scripts/control_main.py scripts/control_handle.py scripts/control_pipeline.py
+catkin_install_python(PROGRAMS scripts/simulation_main.py scripts/simulation_handle.py scripts/simulation_pipeline.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

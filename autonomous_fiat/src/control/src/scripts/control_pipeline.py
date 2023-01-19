@@ -2,9 +2,10 @@ import rospy
 import math
 import numpy as np
 import control_pid
-from mymsgs.msg import control_command, car_command, states
+from mymsgs_module.msg import control_command, car_command, states
 import yaml
 import matplotlib.pyplot as plt
+from visualization_msgs.msg import Marker
 
 
 class States:
@@ -31,21 +32,23 @@ class Car:
 class control_pipeline():
     def __init__(self):
         # Configuration
-        throttle_PID = control_pid.throttle_PID()
-        throttle_PID.K = rospy.get_param("K")
-        throttle_PID.I = rospy.get_param("I")
-        lookAheadTime = rospy.get_param("look_ahead_time")
-        pathToRefPath = rospy.get_param("map_dir")
+        
+        K = rospy.get_param("K")
+        I = rospy.get_param("I")
+        self.throttle_PID = control_pid.throttle_PID(K,I)
+        self.lookAheadTime = rospy.get_param("look_ahead_time")
+        self.pathToRefPath = rospy.get_param("map_dir")
 
         # Variables
         self.states = States()
         self.car = Car()
-        controlCmd = control_command()
-        carCmd = car_command()
-        refPath = self.setReferencePath(pathToRefPath)
-        maxSpeed = 0.0
-        minSpeed = 0.0
-        lookAheadTime = 0.0
+        self.controlCmd = control_command()
+        self.carCmd = car_command()
+        self.refPath = self.setReferencePath(self.pathToRefPath)
+        self.maxSpeed = rospy.get_param("max_speed")
+        self.minSpeed = rospy.get_param("min_speed")
+        self.lookAheadTime = rospy.get_param("look_ahead_time")
+        self.look_ahead_point_index = 0
 
     '''MAIN ALGORITHM'''
 
@@ -55,25 +58,25 @@ class control_pipeline():
         index = self.getNearestIndex()
 
         # Get the look ahead point
-        look_ahead_point = self.getLookAheadPoint(index)
+        self.look_ahead_point_index = self.getLookAheadPointIndex(index)
 
-        # Angle between the car and the look ahead point (ESTÁ MAL, VERIFICAR)
-        alpha = math.atan2((look_ahead_point[1] - self.states.Y),(look_ahead_point[0] - self.states.X))
+        # Angle between the car and the look ahead point and the distance between the 2 
+        [alpha,ld] = self.getAngleAndDist() 
 
         # LATERAL CONTROLLER #
 
         # Get the steering angle
-        ld = math.sqrt((look_ahead_point[1] - self.states.Y)**2 + (look_ahead_point[0] - self.states.X)**2)
-        delta = math.atan((2*self.L*math.sin(alpha))/ld)
+        delta = math.atan((2*self.car.L*math.sin(alpha))/ld)
 
         # Get steering to messages
-        self.controlCmd.steering_angle = delta
-        self.carCmd.steering_angle = delta
+        self.controlCmd.steering = delta
+        self.carCmd.steering = delta
 
         ## LONGITUDINAL CONTROLLER
 
         # Get the velocity reference
         vel_ref = self.maxSpeed - (math.exp(abs(alpha)) - 1) * (self.maxSpeed - self.minSpeed)
+        rospy.loginfo("Velocity %f",vel_ref)
         self.controlCmd.velocity = vel_ref
 
         throttle = self.throttle_PID.calculateThrottle(vel_ref, math.sqrt(self.states.vx**2+self.states.vy**2))
@@ -105,12 +108,57 @@ class control_pipeline():
                 closest_distance = distance
 
         return closest_index
+        
 
-    def getLookAheadPoint(self, index):
-        distance = self.lookAheadTime * math.sqrt(self.states.vx**2+self.states.vy**2)
-        '''Rest of the code'''
+    def getLookAheadPointIndex(self, index):
+        ref_distance = self.lookAheadTime * math.sqrt(self.states.vx**2+self.states.vy**2)
+        walking_path = 0
+        final_index = len(self.refPath)-1
+        pos = self.refPath[index]
+        for i, point in enumerate(self.refPath[index+1:-1]):
+            distance = np.sqrt(np.power(point[0] - pos[0],2) + np.power(point[1] - pos[1],2))
+            pos = [point[0],point[1]]
+            walking_path = walking_path + distance
+            if walking_path > ref_distance:
+                final_index = i + index+1
+                return final_index
+        return final_index
 
+    def getAngleAndDist(self):
+        final_index = self.look_ahead_point_index
+        actual_pos = [self.states.X, self.states.Y]
+        yaw = self.states.Psi
+        yaw_normalize = [np.cos(yaw), np.sin(yaw)]
+        ld = [self.refPath[final_index,0]-actual_pos[0], 
+            self.refPath[final_index,1]-actual_pos[1]]
+        ld_normalize = normalize(ld)
+        alpha = np.arccos(np.dot(yaw_normalize, ld_normalize))
+        distance = np.linalg.norm(ld)
+        
+        return [alpha,distance]
 
+    '''VISUALIZATION FUNCTIONS'''    
+
+    def getLookAheadMarker(self):
+        marker = Marker()
+        marker.header.frame_id = "/map"
+        marker.id = 1
+        marker.header.stamp = rospy.Time.now()
+        marker.type = marker.SPHERE
+        marker.action = marker.ADD
+        marker.scale.x = 0.5
+        marker.scale.y = 0.5
+        marker.scale.z = 0.5
+        marker.color.a = 1.0
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 0.0
+        marker.pose.orientation.w = 1.0
+        marker.pose.position.x = self.refPath[self.look_ahead_point_index,0]
+        marker.pose.position.y = self.refPath[self.look_ahead_point_index,1]
+        marker.pose.position.z = 0.0
+        marker.lifetime = rospy.Duration()
+        return marker
 
     '''GETTERS'''
 
@@ -119,6 +167,9 @@ class control_pipeline():
 
     def getCarCmd(self):
         return self.carCmd
+        
+    def getLooakAheadPoint(self):
+        return self.refPath(self.lookAheadPoint)
 
     '''SETTERS'''
     
@@ -129,3 +180,12 @@ class control_pipeline():
         self.states.vx = data.vx
         self.states.vy = data.vy
         self.states.r = data.r
+
+
+
+'''OTHER FUNCTIONS'''
+def normalize(vector):
+    norm = np.linalg.norm(vector)
+    if norm == 0: 
+        return vector
+    return np.array(vector / norm)

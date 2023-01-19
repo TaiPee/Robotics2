@@ -8,14 +8,14 @@ import search as srch
 import debug_plot as dbg 
 
 # define start and end point for each image in images, if None, will be asked in the image
-START_POINTS = [(277, 556), None, None, None] # must be SAME SIZE as IMAGES
-END_POINTS = [(719, 142), None, None, None] # must be SAME SIZE as IMAGES
+START_POINTS = [None, None, None, None] # must be SAME SIZE as IMAGES (277, 556)
+END_POINTS = [None, None, None, None] # must be SAME SIZE as IMAGES (719, 142)
 
 # list images available
 FILENAMES = ['images/tecnico.jpg', 'images/path1.jpg' , 'images/path2.png', 'images/path3.jpg']
 
 # INDEXES OF IMAGES IN FILENAMES TO PROCESS
-TO_PROCESS = [1]
+TO_PROCESS = [0,1,2,3]
 
 FILENAMES = [FILENAMES[i] for i in TO_PROCESS]    
 START_POINTS = [START_POINTS[i] for i in TO_PROCESS]
@@ -48,19 +48,30 @@ INTER_CLUSTER_DIST = 9 # maximum distance between 2 clusters to be considered ne
 
 ########################### MAIN ###########################
 
-def main(start_points=None, end_points=None, filenames=None):
+def main(start_points=None, end_points=None, filenames=None, default_values=False):
+    """ Can call this function with other scrips. If default_values is True, will use default 
+    values for start_points, end_points and filenames set in global variables FILENAME, START_POINTS and END_POINTS.
+    Otherwise, will use the ones provided. start_points, end_points and filenames must be lists of the same size."""
 
-    # allow to call main with just one image
-    if not isinstance(start_points, list):
-        start_points = [start_points]
-    if not isinstance(end_points, list):
-        end_points = [end_points]
-    if not isinstance(filenames, list):
-        filenames = [filenames]
+    if default_values == True:
+        # use default values
+        start_points = START_POINTS
+        end_points = END_POINTS
+        filenames = FILENAMES
+    else:
+        # allow to call main with just one image
+        if not isinstance(start_points, list):
+            start_points = [start_points]
+        if not isinstance(end_points, list):
+            end_points = [end_points]
+        if not isinstance(filenames, list):
+            filenames = [filenames]
+        if len(start_points) != len(end_points) or len(start_points) != len(filenames):
+            raise ValueError('start_points, end_points and filenames must be lists of the same size')
 
     # process images in filenames
     for start_point, end_point, filename in zip(start_points, end_points, filenames):
-        dbg.debugPrint('Processing ' + filename)
+        print('Processing ' + filename)
 
         ##########   GET START AND END POINTS (IF NOT PROVIDED) ##########
         if start_point is None:
@@ -98,6 +109,11 @@ def main(start_points=None, end_points=None, filenames=None):
         start, end = srch.getStartEndIDs(map,start_point, end_point)
 
         path = srch.a_star(map.graph, start, end)
+        if path is None:
+            print('     No path found',)
+            continue
+        else:
+            print('     Path:', path)
         points = srch.getPointsFromPath(path, map)
         dbg.plotPoints(map, points, start, end, filename, save_name=filename.split('.')[0]+'_path', gif = True)
 
@@ -110,6 +126,6 @@ def main(start_points=None, end_points=None, filenames=None):
         
              
 if __name__ == "__main__":
-    main(START_POINTS, END_POINTS, FILENAMES)
+    main(default_values=True)
 
 # %%

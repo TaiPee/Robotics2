@@ -293,6 +293,8 @@ def recordClick(filename, text):
     plt.title(text)
     plt.imshow(image)
     a = plt.ginput(1)
+    if len(a) == 0:
+        raise(Exception('No click was recorded'))
     y,x = a[0]
     
     plt.close()

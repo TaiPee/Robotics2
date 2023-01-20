@@ -93,7 +93,7 @@ def main(start_points=None, end_points=None, filenames=None, default_values=Fals
 
         ##########   IMAGE PROCESSING   ##########
 
-        # Reading and recizing image
+        # reading and resizing image
         src = img.image_resize(cv.imread(filename), area=AREA)
 
         # get skeleton from source image

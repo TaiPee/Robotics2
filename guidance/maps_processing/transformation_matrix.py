@@ -17,8 +17,9 @@ MAP_PARAMETERS = {
     'size':'1280x1280',
     'scale':2,
     'markers':f'icon:{MARKER_ICON_LINK}|{GPS_MARKERS[0][0]},{GPS_MARKERS[0][1]}|{GPS_MARKERS[1][0]},{GPS_MARKERS[1][1]}',
-    'map_id':MAP_ID['lines'],
-    'key':'AIzaSyCKuSK8xL3HkvP0xINBxb3n1yDxWWvwxHk'
+    'map_id':MAP_ID['lines'], # 'lines' or 'filled'
+    'key':'AIzaSyCKuSK8xL3HkvP0xINBxb3n1yDxWWvwxHk',
+    # 'maptype':'satellite'
 }
 
 GOOGLE_URL = 'https://maps.googleapis.com/maps/api/staticmap?'

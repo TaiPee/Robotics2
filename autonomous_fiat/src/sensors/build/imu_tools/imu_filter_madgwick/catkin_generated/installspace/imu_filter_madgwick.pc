@@ -1,0 +1,8 @@
+prefix=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install
+
+Name: imu_filter_madgwick
+Description: Description of imu_filter_madgwick
+Version: 1.2.5
+Cflags: -I${prefix}/include -I/usr/include
+Libs: -L${prefix}/lib -limu_filter -limu_filter_nodelet /usr/lib/aarch64-linux-gnu/libboost_system.so.1.71.0 /usr/lib/aarch64-linux-gnu/libboost_thread.so.1.71.0
+Requires: dynamic_reconfigure geometry_msgs message_filters nodelet pluginlib roscpp sensor_msgs tf2_geometry_msgs tf2_ros

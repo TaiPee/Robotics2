@@ -636,6 +636,12 @@ rviz_imu_plugin_LIB_DEPENDS:STATIC=general;Qt5::Widgets;general;/opt/ros/noetic/
 //Value Computed by CMake
 rviz_imu_plugin_SOURCE_DIR:STATIC=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/imu_tools/rviz_imu_plugin
 
+//Value Computed by CMake
+sensor_fusion_BINARY_DIR:STATIC=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion
+
+//Value Computed by CMake
+sensor_fusion_SOURCE_DIR:STATIC=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion
+
 //The directory containing a CMake configuration file for sensor_msgs.
 sensor_msgs_DIR:PATH=/opt/ros/noetic/share/sensor_msgs/cmake
 
@@ -825,7 +831,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=10
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

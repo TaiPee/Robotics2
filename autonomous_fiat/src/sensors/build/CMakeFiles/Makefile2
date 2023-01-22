@@ -56,6 +56,7 @@ CMAKE_BINARY_DIR = /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/
 all: gtest/all
 all: imu_tools/imu_tools/all
 all: imu/all
+all: sensor_fusion/all
 all: imu_tools/imu_complementary_filter/all
 all: imu_tools/imu_filter_madgwick/all
 all: imu_tools/rviz_imu_plugin/all
@@ -66,6 +67,7 @@ all: imu_tools/rviz_imu_plugin/all
 preinstall: gtest/preinstall
 preinstall: imu_tools/imu_tools/preinstall
 preinstall: imu/preinstall
+preinstall: sensor_fusion/preinstall
 preinstall: imu_tools/imu_complementary_filter/preinstall
 preinstall: imu_tools/imu_filter_madgwick/preinstall
 preinstall: imu_tools/rviz_imu_plugin/preinstall
@@ -81,6 +83,7 @@ clean: CMakeFiles/download_extra_data.dir/clean
 clean: gtest/clean
 clean: imu_tools/imu_tools/clean
 clean: imu/clean
+clean: sensor_fusion/clean
 clean: imu_tools/imu_complementary_filter/clean
 clean: imu_tools/imu_filter_madgwick/clean
 clean: imu_tools/rviz_imu_plugin/clean
@@ -346,6 +349,24 @@ imu_tools/rviz_imu_plugin/clean: imu_tools/rviz_imu_plugin/CMakeFiles/std_srvs_g
 imu_tools/rviz_imu_plugin/clean: imu_tools/rviz_imu_plugin/CMakeFiles/rviz_imu_plugin_autogen.dir/clean
 
 .PHONY : imu_tools/rviz_imu_plugin/clean
+
+#=============================================================================
+# Directory level rules for directory sensor_fusion
+
+# Recursive "all" directory target.
+sensor_fusion/all:
+
+.PHONY : sensor_fusion/all
+
+# Recursive "preinstall" directory target.
+sensor_fusion/preinstall:
+
+.PHONY : sensor_fusion/preinstall
+
+# Recursive "clean" directory target.
+sensor_fusion/clean:
+
+.PHONY : sensor_fusion/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/doxygen.dir

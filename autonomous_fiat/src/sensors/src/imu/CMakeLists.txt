@@ -108,7 +108,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES imu
+   LIBRARIES imu
    CATKIN_DEPENDS message_generation geometry_msgs rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
 )

@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find imu_filter_madgwick)/../../imu_tools/imu_filter_madgwick/launch/imu_filter_madgwick.launch"/>
+    <node pkg="imu" type="imu_main.py" name="imu_node"/>
+</launch>

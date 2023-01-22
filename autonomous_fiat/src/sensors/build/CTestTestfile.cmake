@@ -7,6 +7,7 @@
 subdirs("gtest")
 subdirs("imu_tools/imu_tools")
 subdirs("imu")
+subdirs("sensor_fusion")
 subdirs("imu_tools/imu_complementary_filter")
 subdirs("imu_tools/imu_filter_madgwick")
 subdirs("imu_tools/rviz_imu_plugin")

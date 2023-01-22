@@ -88,9 +88,9 @@ class imu_pipeline():
         return self.mag_msg
 
     def readData(self):
-        accelFile = 'src/imu/scripts/accelerometer.csv'
-        gyroFile = 'src/imu/scripts/gyroscope.csv'
-        magnetoFile = 'src/imu/scripts/magnetometer.csv'
+        accelFile = 'accelerometer.csv'
+        gyroFile = 'gyroscope.csv'
+        magnetoFile = 'magnetometer.csv'
 
         accelDf = pd.read_csv(accelFile, sep='\t', decimal='.', lineterminator='\n', names=['timestamp','x','y','z'])
         gyroDf = pd.read_csv(gyroFile, sep='\t', decimal='.', lineterminator='\n', names=['timestamp','x','y','z'])

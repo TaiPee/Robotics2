@@ -5,7 +5,7 @@ Laboratory 2 - Autonomous Driving
 Code developed by GUIDANCE team of Group ?:
  
 Bernardo Carvalho, 
-Rafael Jeronimo,
+Rafael Jeronimo, 93163
 Tomás Líbano Monteiro, 93196
 """
 
@@ -25,17 +25,17 @@ END_POINTS = [None, None, None, None]
 
 # transformation matrices from image frame to inertial frame (real world frame) 
 R_MATRIX = [None, 
-            np.array([[-0.018623413997238, 0.231812495281406, -1.320596088340964e+02], 
-                     [-0.231812495281406, -0.018623413997238, 63.803816354536260],
-                     [0, 0, 1]]), 
+            np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
+                      [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
+                      [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
             None, 
             None] 
 
 # list images available
-FILENAMES = ['images/tecnico.jpg', 'images/tecnico_1280.png' , 'images/path2.png', 'images/path3.jpg', 'images/path3.jpg']
+FILENAMES = ['images/tecnico.jpg', 'images/tecnico_1280.png' , 'images/path2.png', 'images/path3.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
-TO_PROCESS = [0,1,2,3]
+TO_PROCESS = [1]
 
 ############################################################################################
 #########     SECTIONS OF THE CODE AND HYPERPARAMETERS OF EACH SECTION     #################

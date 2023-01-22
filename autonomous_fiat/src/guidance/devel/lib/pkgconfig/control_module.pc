@@ -1,8 +1,0 @@
-prefix=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/control/devel
-
-Name: control_module
-Description: Description of control_module
-Version: 0.0.0
-Cflags: -I/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/control/devel/include
-Libs: -L${prefix}/lib 
-Requires: message_generation rospy

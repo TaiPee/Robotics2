@@ -1,7 +1,7 @@
 import numpy as np
+from helperMethods import helperMethods
 
-
-class extended_kf():
+class extended_kf(helperMethods):
     """
     
     x: the state is a concatenation of position and velicity
@@ -81,3 +81,17 @@ class extended_kf():
 
         # update covariance estimate
         self.P = np.matmul(np.subtract(np.identity(2), K), self.P)
+
+    def get_position(self):
+        '''
+        Returns predicted position in the current axis.
+        '''
+
+        return self.x[0, 0]
+
+    def get_velocity(self):
+        '''
+        Returns predicted velocity in the current axis.
+        '''
+
+        return self.x[1, 0]

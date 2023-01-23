@@ -50,6 +50,7 @@ with open(file_name) as data_file:
     prevTime = initial_data["timestamp"]
     prevEast = helperObj.latToMtrs(initial_data["gps_lat"])
     prevNorth = helperObj.lonToMtrs(initial_data["gps_lon"])
+    prevUp = initial_data["gps_alt"]
     
     # lists for collecting final points to plot
     pointsToPlotLat = []
@@ -76,19 +77,27 @@ with open(file_name) as data_file:
         # if GPS data is not zero, proceed
         if(currData["gps_lat"] != 0.0):
 
-            delta_time = prevTime
+            delta_time = currData["timestamp"] - prevTime
+            
 
             defPosErr = 0.0
             # call the update function for all objects
-            vEast = currData["vel_east"]
+            # vEast = currData["vel_east"]
             longitude = kf_east.lonToMtrs(currData["gps_lon"])
+
+            delta_east = longitude - prevEast
+            vEast = delta_east/delta_time
             kf_east.update(longitude, vEast, defPosErr, currData["vel_error"])
 
-            vNorth = currData["vel_north"]
+            # vNorth = currData["vel_north"]
             latitude = kf_north.latToMtrs(currData["gps_lat"])
+            delta_north = latitude - prevNorth
+            vNorth = delta_north/delta_time
             kf_north.update(latitude, vNorth, defPosErr, currData["vel_error"])
 
-            vUp = currData["vel_down"] * -1.0
+            # vUp = currData["vel_down"] * -1.0
+            delta_up = currData["gps_alt"] - prevUp
+            vUp = delta_up/delta_time
             kf_down.update(currData["gps_alt"], vUp, currData["altitude_error"], 
                         currData["vel_error"])
             # append original points to plot
@@ -96,12 +105,16 @@ with open(file_name) as data_file:
             orgLon.append(currData["gps_lon"])
 
 
-            # save previous
+            # update previous
             prevTime = currData["timestamp"]
             prevEast = longitude
             prevNorth = latitude
-            
+            prevUp = currData["gps_alt"]
 
+            prevEast_error = longitude
+            prevNorth_error = latitude
+            prevUp_error = currData["altitude_error"]
+            
         # get predicted values
         predictedLonMtrs = kf_east.get_position()
         predictedLatMtrs = kf_north.get_position()

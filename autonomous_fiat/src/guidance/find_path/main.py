@@ -2,7 +2,7 @@
 Robotics course at Instituto Superior Tecnico, 2022/2023
 Laboratory 2 - Autonomous Driving 
 
-Code developed by GUIDANCE team of Group ?:
+Code developed by the GUIDANCE team of Group ?:
  
 Bernardo Carvalho, 
 Rafael Jeronimo,
@@ -12,6 +12,7 @@ Tomás Líbano Monteiro, 93196
 import cv2 as cv
 import image as img
 import search as srch
+import smooth_path as smth
 import numpy as np
 import debug_plot as dbg 
 
@@ -35,7 +36,7 @@ R_MATRIX = [None,
 FILENAMES = ['images/tecnico.jpg', 'images/tecnico_1280.png' , 'images/path2.png', 'images/path3.jpg', 'images/path3.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
-TO_PROCESS = [0,1,2,3]
+TO_PROCESS = [1]
 
 ############################################################################################
 #########     SECTIONS OF THE CODE AND HYPERPARAMETERS OF EACH SECTION     #################
@@ -57,6 +58,9 @@ MIN_DIST_CLUSTER = 2 # sort cluster window: minimum distance between 2 points of
 
 INTER_CLUSTER_DIST = 8 # maximum distance between 2 clusters to be considered neighbors
 
+# Save GIF
+GIF = False
+
 ############################################################################################
 ################################     MAIN     ##############################################
 ############################################################################################
@@ -67,11 +71,8 @@ START_POINTS = [START_POINTS[i] for i in TO_PROCESS]
 END_POINTS = [END_POINTS[i] for i in TO_PROCESS]
 R_MATRIX = [R_MATRIX[i] for i in TO_PROCESS]
 
-def main(start_points=None, end_points=None, filenames=None, default_values=False):
-    """ Can call this function with other scripts. If default_values is True, will use default 
-    values for start_points, end_points and filenames set in global variables FILENAME, START_POINTS and END_POINTS.
-    Otherwise, will use the ones provided. start_points, end_points and filenames must be lists of the same size."""
-
+def beforeCycle(start_points=None, end_points=None, points_ref = 'image', filenames=None, r_matrices = None, default_values=False):
+    """ put elements in lists if they are not, and convert points to image frame if necessary """
     if default_values == True:
         # use default values
         start_points = START_POINTS
@@ -90,7 +91,21 @@ def main(start_points=None, end_points=None, filenames=None, default_values=Fals
             r_matrices = [r_matrices]
         if len(start_points) != len(end_points) or len(start_points) != len(filenames):
             raise ValueError('start_points, end_points and filenames must be lists of the same size')
+    
+    for point, r_matrix in zip(start_points + end_points , r_matrices):
+        if point is not None and points_ref == 'world_ref':
+            # convert points from inertial frame to image frame
+            point = point 
+    return start_points, end_points, filenames, r_matrices
 
+def main(start_points=START_POINTS, end_points=END_POINTS, points_ref = 'image_ref', filenames=FILENAMES, r_matrices=R_MATRIX):
+    """ Can call this function with other scripts. If arguments are not given, they will be set by the respective global variables START_POINTS, END_POINTS, FILENAMES, and R_MATRICES.
+    Start_points, end_points and filenames must be lists of the same size.
+    'points_ref' can be 'image' or 'world_ref'. If 'world_ref', will convert points to image frame using the respective r_matrix."""
+
+    # put elements in lists if they are not, and convert points to image frame if necessary
+    start_points, end_points, filenames, r_matrices = beforeCycle(start_points, end_points, points_ref, filenames, r_matrices)
+    
     # process images in filenames
     for start_point, end_point, filename, r_matrix in zip(start_points, end_points, filenames, r_matrices):
         print('Processing ' + filename)
@@ -135,8 +150,13 @@ def main(start_points=None, end_points=None, filenames=None, default_values=Fals
             continue
         else:
             print('     Path:', path)
+            
         points = srch.getPointsFromPath(path, map)
-        dbg.plotPoints(map, points, start, end, filename, save_name=filename.split('.')[0]+'_path', gif = True)
+        dbg.plotPoints(map, points, start, end, filename, save_name=filename.split('.')[0]+'_path', gif = GIF)
+
+        ##########   SMOOTH PATH    ##########
+        
+        points = smth.smoothPathMain(points, filename)
 
         ########## CHANGE COORDINATES ##########
         
@@ -160,4 +180,4 @@ def main(start_points=None, end_points=None, filenames=None, default_values=Fals
                 f.write(str(x) + ' ' + str(y) + '\n') 
              
 if __name__ == "__main__":
-    main(default_values=True)
+    main()

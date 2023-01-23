@@ -11,7 +11,7 @@ def callback_gps(kf_north, kf_east, kf_down):
 
 
 
-def callback(kf_north, kf_east, kf_down):
+def callback_imu(kf_north, kf_east, kf_down):
     rospy.loginfo()
 
     kf_north.predict()
@@ -19,6 +19,8 @@ def callback(kf_north, kf_east, kf_down):
     kf_down.predict()
 
     rospy.Subscriber(callback_gps(kf_north, kf_east, kf_down))
+    
+    # reurn 
     
     vel = np.sqrt(vel_east_predicted * vel_east_predicted + \
         vel_north_predicted * vel_north_predicted)
@@ -29,7 +31,7 @@ def fusion():
     kf_east = extended_kf()
     kf_down = extended_kf()
 
-    rospy.Subscriber(callback(kf_north, kf_east, kf_down))
+    rospy.Subscriber(callback_imu(kf_north, kf_east, kf_down))
     rospy.spin()
 
 if __name__ == '__main__':

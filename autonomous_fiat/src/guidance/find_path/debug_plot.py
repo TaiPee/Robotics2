@@ -287,6 +287,8 @@ def plotMap(map, title = None, save_name = None):
 
     myPlot(fig, title, save_name = save_name)
 
+# get points and put them in different frames
+
 def recordClick(filename, text):
     # record click on image and return x,y coordinates with fixed axis
     image = plt.imread(filename)
@@ -300,3 +302,10 @@ def recordClick(filename, text):
     plt.close()
 
     return int(round(x)), int(round(y))
+
+# get point from image frame to world frame and vice versa
+def image2world(point, matrix):
+    return point
+
+def world2image(point, matrix):
+    return point

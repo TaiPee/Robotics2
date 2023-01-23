@@ -173,7 +173,7 @@ def plotPoints(map, original_points, start_id, end_id, img_name, save_name = 'tr
     plt.title('Trajectory from ' + str(start_id) + ' to ' + str(end_id))
 
     filenames = ['original.png']
-    if gif:
+    if gif and save_name is not None:
         plt.savefig(filenames[0])
 
     color = 'red'
@@ -182,15 +182,16 @@ def plotPoints(map, original_points, start_id, end_id, img_name, save_name = 'tr
         filenames.append(filename)
         # plot points with size 1
         plt.scatter( x, y, c = color, s=POINTS_SIZE)
-        if gif:
+        if gif and save_name is not None:
             plt.savefig(filename)
 
-
+    if save_name is not None:
+        plt.savefig(save_name + '.png')
     if PLOT:
         plt.show()
 
     # build gif
-    if gif:
+    if gif and save_name is not None:
         with imageio.get_writer(save_name + '.gif', mode='I') as writer:
             for filename in filenames:
                 image = imageio.imread(filename)
@@ -199,9 +200,8 @@ def plotPoints(map, original_points, start_id, end_id, img_name, save_name = 'tr
         if remove_files:
             for filename in set(filenames):
                 os.remove(filename)
-    else:
-        plt.savefig(save_name + '.png')
-        
+                
+
     plt.close()
 
 def myPlot(src, title, cmap='gray_r', save_name = None):

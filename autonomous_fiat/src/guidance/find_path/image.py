@@ -168,15 +168,17 @@ def getOrderedClusters(sk, bif_points, erase_bif_radius, min_dist_cluster, bif_w
         starting_points = [ (x,y) for [x,y] in np.argwhere(fig>0) ]
 
     # cycle for a starting point
-    while len(starting_points):
+    for starting_point in starting_points:
+        if fig[starting_point] == 0:
+            continue
         
         # get the first starting point and its neighbors
-        curr_point = starting_points[0]
-        neibs = neighbors(fig, curr_point, window_size=min_dist_cluster, ordered_by_dist=True)
+        neibs = neighbors(fig, starting_point, window_size=min_dist_cluster, ordered_by_dist=True)
 
         # put the first point in the cluster
-        ordered_cluster = [curr_point]
-
+        ordered_cluster = [starting_point]
+        curr_point = starting_point
+        
         # cycle getting a cluster ('chase' the line starting at curr_point)
         while len(neibs) != 0:
 
@@ -191,9 +193,6 @@ def getOrderedClusters(sk, bif_points, erase_bif_radius, min_dist_cluster, bif_w
             neibs = neighbors(fig, curr_point, window_size=min_dist_cluster, ordered_by_dist=True)
         
         ordered_clusters.append(ordered_cluster)
-
-        # get starting points of new figure
-        starting_points, _ , fig = getRelevantPoints(fig, bif_window_size, min_bif_neighbors, min_tail_size)
 
     return ordered_clusters    
     

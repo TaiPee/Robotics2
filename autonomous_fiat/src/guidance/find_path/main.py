@@ -59,10 +59,10 @@ MIN_DIST_CLUSTER = 2 # sort cluster window: minimum distance between 2 points of
 
 # Search path
 
-INTER_CLUSTER_DIST = 15 # maximum distance between 2 clusters to be considered neighbors
+INTER_CLUSTER_DIST = 20 # maximum distance between 2 clusters to be considered neighbors
 
 # Save GIF
-GIF = False
+GIF = True
 
 ############################################################################################
 ################################     MAIN     ##############################################

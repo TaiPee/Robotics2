@@ -110,7 +110,7 @@ class simul_pipeline():
         throttle = self.carCommand.throttle
         steering = self.carCommand.steering
 
-        F = self.car.MaxTorque * 4 * self.car.GR / self.car.r_wheel * self.car.eta * throttle # Longitudinal Force
+        F = self.car.MaxTorque * 4 * self.car.GR / self.car.r_wheel * self.car.eta * throttle #- 0.5*self.car.aero_drag*(self.odom.vx**2) # Longitudinal Force
 
         rospy.loginfo("F: %f",F)
 

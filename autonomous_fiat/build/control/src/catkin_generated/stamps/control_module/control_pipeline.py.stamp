@@ -36,7 +36,15 @@ class control_pipeline():
         K = rospy.get_param("K")
         I = rospy.get_param("I")
         self.throttle_PID = control_pid.throttle_PID(K,I)
-        self.pathToRefPath = rospy.get_param("map_dir")
+
+        self.simul = rospy.get_param("simul")
+        if self.simul == 0:
+            self.pathToRefPath = '../maps/map.yaml'
+        elif self.simul == 1 or self.simul == 2:
+            self.pathToRefPath = rospy.get_param("map_dir")
+        else:
+            rospy.logerr("Simul parameter not set correctly")
+
         self.lookAheadTimeLateral = rospy.get_param("look_ahead_time_lateral")
         self.lookAheadTimeLongitudinal = rospy.get_param("look_ahead_time_longitudinal")
         self.maxSpeed = rospy.get_param("max_speed")
@@ -49,7 +57,8 @@ class control_pipeline():
         self.car = Car()
         self.controlCmd = control_command()
         self.carCmd = car_command()
-        self.refPath = self.setReferencePath(self.pathToRefPath)
+        # self.refPath = self.setReferencePath(self.pathToRefPath)
+        self.refPath = None
         self.look_ahead_point_lateral_index = 0
         self.look_ahead_point_longitudinal_index = 0
         self.throttle_prev = 0.0
@@ -100,6 +109,7 @@ class control_pipeline():
     '''AUXILIARY FUNCTIONS'''
 
     def setReferencePath(self, pathToRefPath):
+        # Execute Guidance here
         # Read YAML file
         with open(pathToRefPath, 'r') as file:
             points = yaml.safe_load(file)

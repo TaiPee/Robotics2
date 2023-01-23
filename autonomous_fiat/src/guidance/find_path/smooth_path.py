@@ -187,9 +187,7 @@ def visualize_path(path: np.ndarray, car: Car, binary_map: np.ndarray, smooth_pa
             rotate = Affine2D().rotate_deg_around(x, y, angle)
             rect.set_transform(rotate + ax.transData)
         return rect,
-    print("animating")
     ani = animation.FuncAnimation(fig, update, frames=range(len(smooth_path)), interval = 200, blit=True)
-    print("done")
     plt.show()
     #ani.save("animation.gif")
     # print("saved")

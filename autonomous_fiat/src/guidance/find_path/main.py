@@ -25,7 +25,10 @@ START_POINTS = [None, None, None, None]
 END_POINTS = [None, None, None, None] 
 
 # transformation matrices from image frame to inertial frame (real world frame) 
-R_MATRIX = [None, 
+R_MATRIX = [np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
+                      [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
+                      [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
+            
             np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
                       [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
                       [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
@@ -33,10 +36,10 @@ R_MATRIX = [None,
             None] 
 
 # list images available
-FILENAMES = ['images/tecnico.jpg', 'images/tecnico_1280.png' , 'images/path2.png', 'images/path3.jpg']
+FILENAMES = ['images/tecnico_gordo.png', 'images/tecnico.png' , 'images/path2.png', 'images/path3.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
-TO_PROCESS = [1]
+TO_PROCESS = [0]
 
 ############################################################################################
 #########     SECTIONS OF THE CODE AND HYPERPARAMETERS OF EACH SECTION     #################
@@ -56,7 +59,7 @@ MIN_DIST_CLUSTER = 2 # sort cluster window: minimum distance between 2 points of
 
 # Search path
 
-INTER_CLUSTER_DIST = 8 # maximum distance between 2 clusters to be considered neighbors
+INTER_CLUSTER_DIST = 15 # maximum distance between 2 clusters to be considered neighbors
 
 # Save GIF
 GIF = False

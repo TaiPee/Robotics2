@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 import requests
 from haversine import haversine
+import geonav_conversions as gc
+
 
 ##########   CONSTANTS   ##########
 # Obtaining Google Maps API IMAGE
@@ -122,24 +124,22 @@ def detect_markers(filename):
 
 def create_R_matrix(image_points, gps_points):
     pts = {
-        'zero': {
+        'up_pt': {
             'image_pnt':image_points[0],
             'gps_pnt':gps_points[0]
         },
-        'neg_y': {
+        'down_pt': {
             'image_pnt':image_points[1],
             'gps_pnt':gps_points[1]
         }
     }
 
-    ix1 = pts['zero']['image_pnt'][0]
-    iy1 = pts['zero']['image_pnt'][1]
-    ix2 = pts['neg_y']['image_pnt'][0]
-    iy2 = pts['neg_y']['image_pnt'][1]
-    rx1 = 0
-    ry1 = 0
-    rx2 = 0
-    ry2 = - haversine(pts['zero']['gps_pnt'], pts['neg_y']['gps_pnt'], unit='m') # Haversine distance
+    ix1 = pts['up_pt']['image_pnt'][0]
+    iy1 = pts['up_pt']['image_pnt'][1]
+    ix2 = pts['down_pt']['image_pnt'][0]
+    iy2 = pts['down_pt']['image_pnt'][1]
+    (ry1, rx1, _) = gc.LLtoUTM(GPS_MARKERS[0][0],GPS_MARKERS[0][1])
+    (ry2, rx2, _) = gc.LLtoUTM(GPS_MARKERS[1][0],GPS_MARKERS[1][1])
 
     # Solving system of equations to determine parameters based on 2 points
     A = np.array([[ix1, iy1, 1, 0],

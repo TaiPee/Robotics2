@@ -76,11 +76,11 @@ def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix
     if start_point is None:
         start_point = io.recordClick(filename, 'Click on start point')
     elif points_ref == 'world_ref':
-        start_point = io.world2image(start_point, r_matrix)
+        start_point = io.world2image([start_point], r_matrix)
     if end_point is None:
         end_point = io.recordClick(filename, 'Click on end point')
     elif points_ref == 'world_ref':
-        end_point = io.world2image(end_point, r_matrix)
+        end_point = io.world2image([end_point], r_matrix)
         
     ##########   IMAGE PROCESSING   ##########
 
@@ -123,7 +123,7 @@ def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix
 
     ########## CHANGE COORDINATES AND SAVE TO FILE ##########
 
-    points_UTM_frame = dbg.image2world(points, r_matrix)
+    points_UTM_frame = io.image2world(points, r_matrix)
     
     # write yaml file
     with open(filename.split('.')[0] + '.yaml', 'w') as f:

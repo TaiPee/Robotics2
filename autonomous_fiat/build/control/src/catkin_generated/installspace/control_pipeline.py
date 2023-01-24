@@ -6,7 +6,13 @@ from mymsgs_module.msg import control_command, car_command, states
 import yaml
 import matplotlib.pyplot as plt
 from visualization_msgs.msg import Marker
+import sys
+# sys.path.append('/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/')
+# from find_path import main as guidance
 
+R_MATRIX = np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
+                      [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
+                      [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
 
 class States:
     def __init__(self):
@@ -47,6 +53,7 @@ class control_pipeline():
 
         self.lookAheadTimeLateral = rospy.get_param("look_ahead_time_lateral")
         self.lookAheadTimeLongitudinal = rospy.get_param("look_ahead_time_longitudinal")
+        self.minLookAheadDist = rospy.get_param("min_look_ahead_distance")
         self.maxSpeed = rospy.get_param("max_speed")
         self.minSpeed = rospy.get_param("min_speed")
         self.k_filter_1 = rospy.get_param("k_filter_1")
@@ -109,7 +116,10 @@ class control_pipeline():
     '''AUXILIARY FUNCTIONS'''
 
     def setReferencePath(self, pathToRefPath):
-        # Execute Guidance here
+        #if self.simul == 0:
+            # Execute guidance algorithm
+            #guidance.main('images/tecnico_gordo.png',None,None,'world_ref',R_MATRIX)
+
         # Read YAML file
         with open(pathToRefPath, 'r') as file:
             points = yaml.safe_load(file)
@@ -142,6 +152,7 @@ class control_pipeline():
         else:
             rospy.logerr("Type of look ahead point not defined")
             return -1
+        ref_distance = max(ref_distance, self.minLookAheadDist)
         walking_path = 0
         final_index = len(self.refPath)-1
         pos = self.refPath[index]

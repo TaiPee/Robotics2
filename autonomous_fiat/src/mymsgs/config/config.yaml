@@ -5,6 +5,7 @@ I: 1.0
 # Controller
 look_ahead_time_longitudinal: 1.5
 look_ahead_time_lateral: 0.7
+min_look_ahead_distance: 1.0
 max_speed: 6.0
 min_speed: 1.0
 k_filter_1: 0.6

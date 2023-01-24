@@ -1,6 +1,7 @@
 import rospy
 import sensor_fusion_pipeline
 from sensor_msgs.msg import Imu
+from sensor_fusion_.msg import states
 
 class sensor_fusion_handle():
     def __init__(self):
@@ -10,6 +11,7 @@ class sensor_fusion_handle():
         self.subscribe()
 
     def advertise(self):
+        self.pubStates = rospy.Publisher('/states_topic', states, queue_size=10)
         return
 
     def subscribe(self):
@@ -21,3 +23,5 @@ class sensor_fusion_handle():
 
     def run(self):
         self.pipeline.runAlgorithm()
+        msg = self.pipeline.getState()
+        self.pubStates.publish(msg)

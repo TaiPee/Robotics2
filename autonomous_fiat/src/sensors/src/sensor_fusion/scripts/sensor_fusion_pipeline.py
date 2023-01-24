@@ -5,6 +5,7 @@ from datetime import time
 from std_msgs.msg import Header
 from geometry_msgs.msg import Quaternion, Vector3
 from sensor_msgs.msg import Imu, MagneticField
+from states.msg import states
 
 class States:
     def __init__(self):
@@ -18,27 +19,35 @@ class States:
 class sensor_fusion_pipeline():
     def __init__(self):
         rospy.loginfo("Hello Rita")
-        self.states = States()
+        self.state = States()
         self.index = 0
-
-        ### For Testing Purposes
-        #self.accelDf, self.gyroDf, self.magnetoDf = self.readData()
 
     def runAlgorithm(self):
         """ Dummy code for testing."""
 
-        print(self.states.yaw)
+        print(self.state.yaw)
+        self.state_message = self.stateMsg()
         #self.imu_msg = self.messageImu()
         #self.mag_msg = self.messageMag()
         #self.index += 1
 
-    def readData(self):
-        return
+    def stateMsg(self):
+        msg = states()
+        msg.X = self.state.X
+        msg.Y = self.state.Y
+        msg.Psi = self.state.Psi
+        msg.vx = self.state.vx
+        msg.vy = self.state.vy
+
+        return msg
+    
+    def getState(self):
+        return self.state_message
 
     def setStates(self, data):
-        self.states.aX = data.linear_acceleration.x
-        self.states.aY = data.linear_acceleration.y
-        self.states.aZ = data.linear_acceleration.z
+        self.state.aX = data.linear_acceleration.x
+        self.state.aY = data.linear_acceleration.y
+        self.state.aZ = data.linear_acceleration.z
         
         x = data.orientation.x
         y = data.orientation.y
@@ -52,11 +61,8 @@ class sensor_fusion_pipeline():
         self.states.yaw = yaw
         self.states.vx = 0.0
         self.states.vy = 0.0
-        self.states.vz = 0.0
-        self.states.x = 0.0
         self.states.x = 0.0
         self.states.y = 0.0
-        self.states.z = 0.0
 
 
     def setLookAhead(self, data):

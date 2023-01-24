@@ -10,11 +10,11 @@ Tomás Líbano Monteiro, 93196
 """
 
 import cv2 as cv
+import aio as io
 import image as img
 import search as srch
 import smooth_path as smth
 import numpy as np
-import debug_plot as dbg 
 
 ############################################################################################
 ############     CHANGE PARAMETERS BELLOW TO RUN SCRIPT DIRECTLY:    #######################
@@ -42,27 +42,25 @@ FILENAMES = ['images/tecnico_gordo.png', 'images/tecnico.png' , 'images/path2.pn
 TO_PROCESS = [0]
 
 ############################################################################################
-#########     SECTIONS OF THE CODE AND HYPERPARAMETERS OF EACH SECTION     #################
+######################     HYPERPARAMETERS OF THE CODE     #################################
 ############################################################################################
 
-# Get relevant points
+# image.py
 
 MIN_TAIL_SIZE = 5 # tails that are shorter than MIN_TAIL_SIZE will be removed
 BIF_WINDOW_SIZE = 7 # bif points have 3+ direct neibs, AND more than MIN_BIF_NEIGHBORS inside BIF_WINDOW_SIZE 
 MIN_BIF_NEIGHBORS = BIF_WINDOW_SIZE*3 # avoid considering edges as bifurcation points
 RELEVANT_POINT_THRESHOLD = 30 # if choosen start or end point is closer than this to a relevant points, will merge with them
-
-# Get clusters
-
 ERASE_BIF_RADIUS = 3 # points that are closer than ERASE_BIF_RADIUS of a bifurcation point will be erased
 MIN_DIST_CLUSTER = 2 # sort cluster window: minimum distance between 2 points of the same cluster
 
-# Search path
+# search.py
 
 INTER_CLUSTER_DIST = 20 # maximum distance between 2 clusters to be considered neighbors
 
-# Save GIF
-GIF = True
+# debug_plot.py
+
+GIF = True # if True, will save a gif of the process, if False, will only save an image of the final result
 
 ############################################################################################
 ################################     MAIN     ##############################################
@@ -75,13 +73,13 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
         raise Exception('Invalid points reference, must be "world_ref" or "image_ref"')
     
     if start_point is None:
-        start_point = dbg.recordClick(filename, 'Click on start point')
+        start_point = io.recordClick(filename, 'Click on start point')
     elif points_ref == 'world_ref':
-        start_point = dbg.world2image(start_point, r_matrix)
+        start_point = io.world2image(start_point, r_matrix)
     if end_point is None:
-        end_point = dbg.recordClick(filename, 'Click on end point')
+        end_point = io.recordClick(filename, 'Click on end point')
     elif points_ref == 'world_ref':
-        end_point = dbg.world2image(end_point, r_matrix)
+        end_point = io.world2image(end_point, r_matrix)
         
     ##########   IMAGE PROCESSING   ##########
 
@@ -96,7 +94,7 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
     
     # get closest point in path to start and end, and update bif points if necessary
     start_point, end_point, bif_points = img.getClosestPoints(start_point, end_point, starting_points, bif_points, sk, RELEVANT_POINT_THRESHOLD)
-    dbg.plotRelevantPoints(sk, starting_points, bif_points, start_point, end_point)
+    io.plotRelevantPoints(sk, starting_points, bif_points, start_point, end_point)
 
     # get clusters with ordered points
     clusters = img.getOrderedClusters(sk, bif_points, ERASE_BIF_RADIUS, MIN_DIST_CLUSTER, BIF_WINDOW_SIZE, MIN_BIF_NEIGHBORS, 4)
@@ -104,8 +102,8 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
     ##########   SEARCH    ##########
 
     map = srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)
-    # dbg.plotClusters([edge.cluster for edge in map.edges], sk.shape, 'Fixed clusters (' + str(len(fixed_clusters)) + ')' ) 
-    dbg.plotMap(map)
+    # io.plotClusters([edge.cluster for edge in map.edges], sk.shape, 'Fixed clusters (' + str(len(fixed_clusters)) + ')' ) 
+    io.plotMap(map)
 
     # get start and end ids from map.unique_ends that are closest to start_point and end_point
     start, end = srch.getStartEndIDs(map,start_point, end_point)
@@ -116,7 +114,7 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
         return None
         
     points = srch.getPointsFromPath(path, map)
-    dbg.plotPoints(map, points, start, end, filename, save_name=filename.split('.')[0]+'_path', gif = GIF)
+    io.plotPoints(map, points, start, end, filename, save_name=filename.split('.')[0]+'_path', gif = GIF)
 
     ##########   SMOOTH PATH    ##########
     

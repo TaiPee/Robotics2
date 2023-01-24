@@ -14,8 +14,8 @@ FILE_PATH = "images/tecnico_1280.txt"
 WEIGHT_DATA = 0.1
 WEIGHT_SMOOTH = 0.1
 TOLERANCE = 0.00001
-CAR_WIDTH=80
-CAR_HEIGHT=40
+CAR_WIDTH=1
+CAR_HEIGHT=1
 VISUALIZE = True
 
 def get_path_vector(file_name:str)-> np.ndarray:
@@ -73,17 +73,6 @@ def smooth_path(path, weight_data, weight_smooth, tolerance):
                 newpath[i][j] += weight_smooth * (newpath[i-1][j] + newpath[i+1][j] - (2.0 * newpath[i][j]))
                 change += abs(aux - newpath[i][j])
     return newpath
-
-def smooth_path2(path: np.ndarray) -> np.ndarray:
-    
-    # Smooth the path using spline interpolation
-    x, y = zip(*path)
-    tck, u = splprep([x, y], s=400, per=True)
-    u_new = np.linspace(u.min(), u.max(), path.shape[0])
-    smooth_path = splev(u_new, tck)
-    #transpose the array
-    smooth_path = np.array(smooth_path).T
-    return smooth_path
 
 def check_path_limits(binary_map, car_length, car_width, smooth_path):
     for i in range(1, 88):

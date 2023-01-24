@@ -5,7 +5,12 @@ from haversine import haversine
 
 ##########   CONSTANTS   ##########
 # Obtaining Google Maps API IMAGE
+<<<<<<< Updated upstream:guidance/maps_processing/transformation_matrix.py
 GPS_MARKERS = [(38.7376103903459,-9.13892521638698),(38.735631349807996,-9.138723252002077)] # 1st is zero of frame and 2nd is a point in the negative part of y-axis
+=======
+# GPS_MARKERS = [(38.7376103903459,-9.13892521638698),(38.735631349807996,-9.138723252002077)]
+GPS_MARKERS = [(38.7377153594707, -9.140025145384882),(38.735731349807996,-9.137423252002077)]
+>>>>>>> Stashed changes:autonomous_fiat/src/guidance/maps_processing/transformation_matrix.py
 GPS_CENTER = (38.736747422021644,-9.138782702055112)
 MARKER_ICON_LINK = 'https://i.postimg.cc/g2NNh7XK/Pixel-red.png'
 MAP_ID = {'lines':'9d133c1ebd1d6a7e',
@@ -157,6 +162,76 @@ def create_R_matrix(image_points, gps_points):
     return R
 
 
+<<<<<<< Updated upstream:guidance/maps_processing/transformation_matrix.py
+=======
+def draw_yaml_on_map(filename):
+    def downsample_to_proportion(rows, proportion):
+        return rows[::int(1 / proportion)]
+
+    # Read YAML file
+    with open(filename, 'r') as f:
+        data = yaml.safe_load(f)
+
+        # Save in numpy array
+        points_utm = np.array([v for v in data['reference_path']])
+
+    # Convert UTM to LL
+    (_,_,utm_zone) = gc.LLtoUTM(GPS_CENTER[0],GPS_CENTER[1])
+    points_ll = np.array([list(gc.UTMtoLL(y,x,utm_zone)) for x,y in points_utm])    
+
+    # Marker settings
+    markers_list = [f'{lat:.10f},{lon:.10f}' for lat,lon in downsample_to_proportion(points_ll, 0.2)]
+    markers_str = '|'
+    markers_str = markers_str.join(markers_list)
+
+    map_parameters = MAP_PARAMETERS
+    map_parameters['markers'] = f'icon:{MARKER_ICON_LINK}|{markers_str}'
+    map_parameters['map_id'] = MAP_ID['filled']
+    # map_parameters['maptype'] = 'satellite' # do not apply process_image() if applied this option
+
+    # Get map
+    map_filename = f'{filename.split(".")[0]}.png'
+    obtain_map(params=map_parameters, filename=map_filename)
+
+    return map_filename
+
+def check_accuracy(map_filename, point_gps, R_matrix):
+    def image2world(points, matrix):
+        points = np.array(points)
+
+        # convert points to numpy, add extra one element, and transpose
+        points = np.transpose(np.c_[points, np.ones(np.size(points,axis=0))])
+
+        # multiply by transformation matrix and remove extra element
+        world_points = np.transpose((matrix @ points)[:-1])
+
+        return world_points
+
+    # Set marker 
+    map_parameters = MAP_PARAMETERS
+    map_parameters['markers'] = f'icon:{MARKER_ICON_LINK}|{point_gps[0]},{point_gps[1]}'
+
+    # Get map
+    obtain_map(params=map_parameters, filename=map_filename)
+    map_filename = process_image(map_filename)
+
+    # Detect markers
+    mrk = detect_markers(map_filename)
+
+    if np.size(mrk,axis=0) != 1:
+        raise(Exception('One (only) marker expected!'))
+
+    # Convert points to UTM coordinates
+    img_UTM = (image2world(mrk, R_matrix)).reshape((2,))
+    (utm_y,utm_x,_) = gc.LLtoUTM(point_gps[0], point_gps[1])
+    ll_UTM = np.array([utm_x, utm_y])
+
+    # Compute difference 
+    dif = np.linalg.norm(img_UTM - ll_UTM)
+
+    return dif
+
+>>>>>>> Stashed changes:autonomous_fiat/src/guidance/maps_processing/transformation_matrix.py
 if __name__ == "__main__":
     filename = 'maps_process/ist_map.png'
     obtain_map(filename=filename)

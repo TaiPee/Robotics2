@@ -146,17 +146,17 @@ with open(file_name) as data_file:
         # plt.xlim([0.0077+37.94, 0.0092+37.94])
         # plt.ylim([-0.0076-1.2204e2, -0.0095-1.2204e2])
 
-print(len(orgLat))
+
 pLa = orgLat[::10]
 pLo = orgLon[::10]
+plt.subplot(2,1,1)
 for j in range(len(pLa)):
     plt.scatter(pLa[j],pLo[j])
     plt.pause(0.001)
     plt.xlim([0.0077+37.94, 0.0092+37.94])
     plt.ylim([-0.0076-1.2204e2, -0.0095-1.2204e2])
-plt.show()
 
-# print(len(orgLat))
+plt.subplot(2,1,2)
 pLa = pointsToPlotLat[::10]
 pLo = pointsToPlotLon[::10]
 for j in range(len(pLa)):
@@ -164,6 +164,8 @@ for j in range(len(pLa)):
     plt.pause(0.001)
     plt.xlim([0.0077+37.94, 0.0092+37.94])
     plt.ylim([-0.0076-1.2204e2, -0.0095-1.2204e2])
+
+
 plt.show()
 
 plt.show()

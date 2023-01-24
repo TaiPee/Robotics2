@@ -6,6 +6,7 @@ import imageio.v2 as imageio
 from random import randint
 import os
 from copy import deepcopy
+from maps_processing.geonav_conversions import LLtoUTM
 
 DEBUG_PRINT = False
 PLOT = True
@@ -303,7 +304,7 @@ def recordClick(filename, text):
 
     return int(round(x)), int(round(y))
 
-# get point from image frame to world frame and vice versa
+# get point from image frame to world frame 
 def image2world(points, image_to_world_matrix):
     points = np.array(points)
 
@@ -315,6 +316,7 @@ def image2world(points, image_to_world_matrix):
 
     return real_points
 
+# get point from world frame to image frame 
 def world2image(points, image_to_world_matrix):
     points = np.array(points)
 
@@ -325,3 +327,15 @@ def world2image(points, image_to_world_matrix):
     image_points = np.transpose((np.linalg.inv(image_to_world_matrix) @ points)[:-1])
 
     return image_points
+
+# get point from current gps position 
+def getGPSpoint(image_to_world_matrix):
+    LLpoint = None
+    
+    # get gps position
+    # bea e isa e tiagão
+    # put them in UTM coordinates
+    point = LLtoUTM(LLpoint[0], LLpoint[1])
+    # put in image frame
+    point = world2image(point, image_to_world_matrix)
+    return point

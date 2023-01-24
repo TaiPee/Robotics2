@@ -75,6 +75,8 @@ def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix
 
     if start_point is None:
         start_point = io.recordClick(filename, 'Click on start point')
+    elif start_point == 'gps':
+        start_point = io.getGPSpoint(filename_filled, filename)
     elif points_ref == 'world_ref':
         start_point = io.world2image([start_point], r_matrix)
     if end_point is None:

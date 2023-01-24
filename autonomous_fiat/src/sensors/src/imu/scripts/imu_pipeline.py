@@ -4,6 +4,9 @@ from datetime import time
 from std_msgs.msg import Header
 from geometry_msgs.msg import Quaternion, Vector3
 from sensor_msgs.msg import Imu, MagneticField
+import FaBo9Axis_MPU9250
+import time
+import sys
 
 class States:
     def __init__(self):
@@ -24,18 +27,12 @@ class imu_pipeline():
         self.states = States()
         self.index = 0
 
-        ### For Testing Purposes
-        self.accelDf, self.gyroDf, self.magnetoDf = self.readData()
 
     def runAlgorithm(self):
         """ Dummy code for testing."""
 
         ### For Testing Purposes
-        self.data = []
-        self.data = self.data + list(self.accelDf.loc[self.index,['x','y','z']])
-        self.data = self.data + list(self.gyroDf.loc[self.index,['x','y','z']])
-        self.data = self.data + list(self.magnetoDf.loc[self.index,['x','y','z']])
-        ###
+        self.data = self.readData()
 
         self.setStates(data=self.data)
         self.imu_msg = self.messageImu()
@@ -49,6 +46,7 @@ class imu_pipeline():
         h = Header()
         h.stamp = rospy.Time.now()
         h.seq = self.index
+        h.frame_id = 'imu_link'
         msg.header = h
 
         msg.orientation_covariance[0] = -1
@@ -88,26 +86,51 @@ class imu_pipeline():
         return self.mag_msg
 
     def readData(self):
-        accelFile = 'accelerometer.csv'
-        gyroFile = 'gyroscope.csv'
-        magnetoFile = 'magnetometer.csv'
-
-        accelDf = pd.read_csv(accelFile, sep='\t', decimal='.', lineterminator='\n', names=['timestamp','x','y','z'])
-        gyroDf = pd.read_csv(gyroFile, sep='\t', decimal='.', lineterminator='\n', names=['timestamp','x','y','z'])
-        magnetoDf = pd.read_csv(magnetoFile, sep='\t', decimal='.', lineterminator='\n', names=['timestamp','x','y','z'])
         
-        ### GET MORE magnetic data
+        data = []
+        try:
+            mpu9250 = FaBo9Axis_MPU9250.MPU9250()
+            accel = mpu9250.readAccel()
+            
+            print( " ax = " , ( accel['x'] ))
+            print( " ay = " , ( accel['y'] ))
+            print( " az = " , ( accel['z'] ))
+            
+            data.append(accel['x'])
+            data.append(accel['y'])
+            data.append(accel['z'])
+            
+            gyro = mpu9250.readGyro()
+            print( " gx = " , ( gyro['x'] ))
+            print( " gy = " , ( gyro['y'] ))
+            print( " gz = " , ( gyro['z'] ))
+            
+            data.append(gyro['x'])
+            data.append(gyro['y'])
+            data.append(gyro['z'])
 
-        magnetoDf = pd.concat([magnetoDf]*5, ignore_index=True)
+            mag = mpu9250.readMagnet()
+            print( " mx = " , ( mag['x'] ))
+            print( " my = " , ( mag['y'] ))
+            print( " mz = " , ( mag['z'] ))
+            
+            data.append(mag['x'])
+            data.append(mag['y'])
+            data.append(mag['z'])
+
+            time.sleep(0.1)
+            return data
+        except:
+            return []
+                   
         
-        
-        print(accelDf.shape)
-        print(gyroDf.shape)
-        print(magnetoDf.shape)
-
-        return accelDf, gyroDf, magnetoDf
-
+    
+    
     def setStates(self, data):
+        
+        if len(data)==0:
+            return
+            
         self.states.aX = data[0]
         self.states.aY = data[1]
         self.states.aZ = data[2]

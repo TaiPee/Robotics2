@@ -2,7 +2,7 @@ from shapely.geometry import LineString
 import cv2 as cv
 import numpy as np
 import math
-from debug_plot import printWindow, drawPoints, outOfBorders
+import aio as io
 
 ########################### IMAGE PROCESSING ###########################
 
@@ -51,7 +51,7 @@ def neighbors(src, point, window_size=1, ordered_by_dist=False):
     for i in range(point[0] - window_size, point[0] + window_size+1):
         for j in range(point[1] - window_size, point[1] + window_size+1):
             if (    (i,j) != point  
-                    and not outOfBorders(src, (i,j)) 
+                    and not io.outOfBorders(src, (i,j)) 
                     and src[i,j] == 255):
                 neighbors.append((i,j))
     
@@ -76,8 +76,8 @@ def eraseTail(original_src, point, min_tail_size):
     
     if tail_size < min_tail_size:
         # debug
-        printWindow(original_src, curr_point, text = 'before erased trail starting at ' + str(point), window_size=min_tail_size+1) 
-        printWindow(src, curr_point, text = 'after erased trail starting at ' + str(point),  window_size=min_tail_size+1)
+        io.printWindow(original_src, curr_point, text = 'before erased trail starting at ' + str(point), window_size=min_tail_size+1) 
+        io.printWindow(src, curr_point, text = 'after erased trail starting at ' + str(point),  window_size=min_tail_size+1)
         return True, src
     else:
         return False, original_src
@@ -97,7 +97,7 @@ def getRelevantPoints(original_src, bif_window_size, min_bif_neighbors, min_tail
             tail_erased, src_no_tails = eraseTail(src_no_tails, point, min_tail_size)
             if not tail_erased:
                 starting_points.append(point)
-                printWindow(src_no_tails, point, text = 'starting point' + str(point)) # debug
+                io.printWindow(src_no_tails, point, text = 'starting point' + str(point)) # debug
 
     # another image to erase neib of bif points
     src = src_no_tails.copy()
@@ -112,7 +112,7 @@ def getRelevantPoints(original_src, bif_window_size, min_bif_neighbors, min_tail
             # check if has enough neighbors in window to be a bifurcation point
             if len(neighbors(src, point, window_size=bif_window_size)) >= min_bif_neighbors:
                 bif_points.append(point)
-                printWindow(src, point, text = 'bif point' + str(point)) # debug
+                io.printWindow(src, point, text = 'bif point' + str(point)) # debug
     
     return starting_points, bif_points, src_no_tails
 
@@ -158,7 +158,7 @@ def getOrderedClusters(sk, bif_points, erase_bif_radius, min_dist_cluster, bif_w
     ordered_clusters = []
 
     # erase bif points to get the image with separate clusters 
-    fig = drawPoints(sk, bif_points, color=0, radius=erase_bif_radius)
+    fig = io.drawPoints(sk, bif_points, color=0, radius=erase_bif_radius)
 
     # get starting points of figure
     starting_points, _ , fig = getRelevantPoints(fig, bif_window_size, min_bif_neighbors, min_tail_size) 

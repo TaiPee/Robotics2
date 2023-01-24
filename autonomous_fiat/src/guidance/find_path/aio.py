@@ -304,8 +304,24 @@ def recordClick(filename, text):
     return int(round(x)), int(round(y))
 
 # get point from image frame to world frame and vice versa
-def image2world(point, matrix):
-    return point
+def image2world(points, image_to_world_matrix):
+    points = np.array(points)
 
-def world2image(point, matrix):
-    return point
+    # convert points to numpy, add extra one element, and transpose
+    points = np.transpose(np.c_[points, np.ones(np.size(points,axis=0))])
+
+    # multiply by transformation matrix and remove extra element
+    real_points = np.transpose((image_to_world_matrix @ points)[:-1])
+
+    return real_points
+
+def world2image(points, image_to_world_matrix):
+    points = np.array(points)
+
+    # convert points to numpy, add extra one element, and transpose
+    points = np.transpose(np.c_[points, np.ones(np.size(points,axis=0))])
+
+    # multiply by transformation matrix and remove extra element
+    image_points = np.transpose((np.linalg.inv(image_to_world_matrix) @ points)[:-1])
+
+    return image_points

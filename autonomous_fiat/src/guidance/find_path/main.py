@@ -21,22 +21,23 @@ import debug_plot as dbg
 ############################################################################################
 
 # define start and end point for each image in images (in image coord), if None, will be asked in the image
-START_POINTS = [(929,491), None, None, None] 
-END_POINTS = [(455,831), None, None, None] 
+START_POINTS = [(487902.91516208043, 4287516.813179664), None, None, None] 
+END_POINTS = [(488004.4493165874, 4287611.675840042), None, None, None] 
 
 # transformation matrices from image frame to inertial frame (real world frame) 
-R_MATRIX = [np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
-                      [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
+R_MATRIX = [np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789570e+05],
+                      [-2.32154232e-01, -2.02335264e-04,  4.28772144e+06],
                       [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
             
-            np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
-                      [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
+            np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789570e+05],
+                      [-2.32154232e-01, -2.02335264e-04,  4.28772144e+06],
                       [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
             None, 
             None] 
 
 # list images available
-FILENAMES = ['images/tecnico_gordo.png', 'images/tecnico.png' , 'images/path2.png', 'images/path3.jpg']
+FILENAMES = ['images/tecnico.png', 'images/tecnico_gordo.png' , 'images/path2.png', 'images/path3.jpg']
+FILENAMES_FILLED = ['images/tecnico_gordo.png', 'images/tecnico_gordo.png' , 'images/path2.png', 'images/path3.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
 TO_PROCESS = [0]
@@ -68,20 +69,20 @@ GIF = True
 ################################     MAIN     ##############################################
 ############################################################################################
 
-def main(filename, start_point, end_point, points_ref, r_matrix = None):
+def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix = None):
 
     ##########   GET START AND END POINTS IN IMAGE FRAME ##########
     if points_ref != 'world_ref' and points_ref != 'image_ref':
         raise Exception('Invalid points reference, must be "world_ref" or "image_ref"')
-    
+
     if start_point is None:
         start_point = dbg.recordClick(filename, 'Click on start point')
     elif points_ref == 'world_ref':
-        start_point = dbg.world2image(start_point, r_matrix)
+        start_point = dbg.world2image([start_point], r_matrix)
     if end_point is None:
         end_point = dbg.recordClick(filename, 'Click on end point')
     elif points_ref == 'world_ref':
-        end_point = dbg.world2image(end_point, r_matrix)
+        end_point = dbg.world2image([end_point], r_matrix)
         
     ##########   IMAGE PROCESSING   ##########
 
@@ -120,34 +121,19 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
 
     ##########   SMOOTH PATH    ##########
     
-    points = smth.smoothPathMain(points, filename)
+    points = smth.smoothPathMain(points, filename_filled)
 
     ########## CHANGE COORDINATES AND SAVE TO FILE ##########
+
+    points_UTM_frame = dbg.image2world(points, r_matrix)
     
+    # write yaml file
     with open(filename.split('.')[0] + '.yaml', 'w') as f:
-        # convert points to numpy, add extra one element, and transpose
-        points_np = np.transpose(np.c_[np.array(points), np.ones(len(points))])
-
-        # multiply by transformation matrix and remove extra element
-        if r_matrix is None:
-            r_matrix = np.eye(3)
-        real_points = np.transpose((r_matrix @ points_np)[:-1])
-
-        # write yaml file
-        string = 'reference_path: '+ str([[x,y] for x,y in real_points])
+        string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
         f.write(string.replace('],', '],\n'))
 
     with open('map.yaml', 'w') as f:
-        # convert points to numpy, add extra one element, and transpose
-        points_np = np.transpose(np.c_[np.array(points), np.ones(len(points))])
-
-        # multiply by transformation matrix and remove extra element
-        if r_matrix is None:
-            r_matrix = np.eye(3)
-        real_points = np.transpose((r_matrix @ points_np)[:-1])
-
-        # write yaml file
-        string = 'reference_path: '+ str([[x,y] for x,y in real_points])
+        string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
         f.write(string.replace('],', '],\n'))
 
     # write txt file (image frame) for comparison
@@ -155,12 +141,13 @@ def main(filename, start_point, end_point, points_ref, r_matrix = None):
         for x,y in points:
             f.write(str(x) + ' ' + str(y) + '\n') 
 
-    return real_points
+    return points_UTM_frame
 
 def testScript():
     """ This function is used to test the script. It will run the main function with the global variables set in this script. """
     # update lists with indexes to process
-    filenames = [FILENAMES[i] for i in TO_PROCESS]    
+    filenames = [FILENAMES[i] for i in TO_PROCESS] 
+    filenames_filled = [FILENAMES_FILLED[i] for i in TO_PROCESS] 
     start_points = [START_POINTS[i] for i in TO_PROCESS]
     end_points = [END_POINTS[i] for i in TO_PROCESS]
     r_matrices = [R_MATRIX[i] for i in TO_PROCESS]
@@ -169,9 +156,9 @@ def testScript():
         raise ValueError('start_points, end_points and filenames must be lists of the same size')
     
     # run main function for each image
-    for filename, start_point, end_point, r_matrix in zip(filenames, start_points, end_points, r_matrices):
+    for filename, filename_filled, start_point, end_point, r_matrix in zip(filenames, filenames_filled, start_points, end_points, r_matrices):
         print('Processing ' + filename)
-        main(filename, start_point, end_point, points_ref = 'image_ref', r_matrix = r_matrix)
+        main(filename, filename_filled, start_point, end_point, points_ref = 'world_ref', r_matrix = r_matrix)
         
 if __name__ == "__main__":
     testScript()

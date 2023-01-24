@@ -3,11 +3,12 @@ import numpy as np
 import requests
 from haversine import haversine
 import geonav_conversions as gc
+import yaml
 
 
 ##########   CONSTANTS   ##########
 # Obtaining Google Maps API IMAGE
-GPS_MARKERS = [(38.7376103903459,-9.13892521638698),(38.735631349807996,-9.138723252002077)] # 1st is zero of frame and 2nd is a point in the negative part of y-axis
+GPS_MARKERS = [(38.7376103903459,-9.13892521638698),(38.735631349807996,-9.138723252002077)]
 GPS_CENTER = (38.736747422021644,-9.138782702055112)
 MARKER_ICON_LINK = 'https://i.postimg.cc/g2NNh7XK/Pixel-red.png'
 MAP_ID = {'lines':'9d133c1ebd1d6a7e',
@@ -114,11 +115,13 @@ def detect_markers(filename):
     marker_points = np.empty((0,2))
     while marker_pixels.size > 0:
         pixel = marker_pixels[0]
-        marker_points = np.append(marker_points, [pixel], axis=0)
 
-        mask = [not are_neighbours(pixel, pixel_i) for pixel_i in marker_pixels]
+        mask = [are_neighbours(pixel, pixel_i) for pixel_i in marker_pixels]
 
-        marker_pixels = marker_pixels[mask]
+        mean_pixel = np.mean(marker_pixels[mask], axis=0)
+        marker_points = np.append(marker_points, [mean_pixel], axis=0)
+
+        marker_pixels = marker_pixels[[not elem for elem in mask]]
 
     return marker_points
 
@@ -157,9 +160,46 @@ def create_R_matrix(image_points, gps_points):
     return R
 
 
-if __name__ == "__main__":
-    filename = 'maps_process/ist_map.png'
-    obtain_map(filename=filename)
-    filename = process_image(filename)
+def draw_yaml_on_map(filename):
+    def downsample_to_proportion(rows, proportion):
+        return rows[::int(1 / proportion)]
 
-    print(create_R_matrix(detect_markers(filename), GPS_MARKERS))
+    # Read YAML file
+    with open(filename, 'r') as f:
+        data = yaml.safe_load(f)
+
+        # Save in numpy array
+        points_utm = np.array([v for v in data['reference_path']])
+
+    # Convert UTM to LL
+    (_,_,utm_zone) = gc.LLtoUTM(GPS_CENTER[0],GPS_CENTER[1])
+    points_ll = np.array([list(gc.UTMtoLL(y,x,utm_zone)) for x,y in points_utm])    
+
+    # Marker settings
+    markers_list = [f'{lat:.10f},{lon:.10f}' for lat,lon in downsample_to_proportion(points_ll, 0.2)]
+    markers_str = '|'
+    markers_str = markers_str.join(markers_list)
+
+    map_parameters = MAP_PARAMETERS
+    map_parameters['markers'] = f'icon:{MARKER_ICON_LINK}|{markers_str}'
+    map_parameters['map_id'] = MAP_ID['filled']
+    # map_parameters['maptype'] = 'satellite' # do not apply process_image() if applied this option
+
+    # Get map
+    map_filename = f'{filename.split(".")[0]}.png'
+    obtain_map(params=map_parameters, filename=map_filename)
+
+    return map_filename
+
+if __name__ == "__main__":
+    # # Get map
+    # filename = 'maps_process/ist_map.png'
+    # obtain_map(filename=filename)
+    # filename = process_image(filename)
+
+    # # Get R matrix
+    # print(create_R_matrix(detect_markers(filename), GPS_MARKERS))
+
+    # Get map with points of .yaml file
+    filename = draw_yaml_on_map('../find_path/map.yaml')
+    process_image(filename)

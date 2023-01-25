@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import gps_handle
+from pyicloud import PyiCloudService
 import rospy
 
 def main():

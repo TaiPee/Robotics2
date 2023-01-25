@@ -3,18 +3,23 @@ import pandas as pd
 from datetime import time
 from std_msgs.msg import Header
 from sensor_msgs.msg import NavSatFix
+import time
+from pyicloud import PyiCloudService
+from geonav_conversions import *
+import matplotlib.pyplot as plt
 
 class States:
     def __init__(self):
         self.lat = 0.0
         self.long = 0.0
-        self.accLat = 0.0
-        self.accLong = 0.0
+        self.posCov = 0.0
 
 
 class gps_pipeline():
-    def __init__(self):
+    def __init__(self, api):
         rospy.loginfo("Hello Rita")
+        self.api = api
+        self.device = self.api.devices[1]
         self.states = States()
         self.index = 0
 
@@ -46,8 +51,8 @@ class gps_pipeline():
         msg.latitude = self.states.lat
         msg.longitude = self.states.long
 
-        mat[0] = self.states.accLat * self.states.accLat
-        mat[3] = self.states.accLong * self.states.accLong
+        mat[0] = self.states.posCov
+        mat[3] = self.states.posCov
 
         msg.position_covariance = mat
         msg.position_covariance_type = 2
@@ -62,15 +67,21 @@ class gps_pipeline():
         ### TO IMPLEMENT
         # for testing purposes
         data = States()
-        data.lat = 0.0
-        data.long = 0.0
-        data.accLat = 0.0
-        data.accLong = 0.0
-        ### 
+        location = self.device.location()
+        if location['positionType'] == 'GPS' and location['timeStamp'] != current_ts:
+            print(location['latitude'], location['longitude'])
+            print(location['horizontalAccuracy'])
+            current_ts = location['timeStamp']
+            #lat = location['latitude']
+            #lon = location['longitude']
+            #north, east, _ = LLtoUTM(lat, lon)
+            data.latitude = location['latitude']
+            data.longitude = location['longitude']
+            data.posCov = location['horizontalAccuracy'] * location['horizontalAccuracy']
+
         return data
 
     def setStates(self, data):
         self.states.lat = data.lat
         self.states.long = data.long
-        self.accLat = data.accLat
-        self.accLong = data.accLong
+        self.states.posCov = data.posCov

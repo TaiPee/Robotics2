@@ -3,9 +3,9 @@ import gps_pipeline
 from sensor_msgs.msg import NavSatFix
 
 class gps_handle():
-    def __init__(self):
+    def __init__(self, api):
         rospy.init_node('imu_node')
-        self.pipeline = gps_pipeline.gps_pipeline()
+        self.pipeline = gps_pipeline.gps_pipeline(api)
         self.advertise()
 
     def advertise(self):

@@ -92,33 +92,42 @@ class imu_pipeline():
             mpu9250 = FaBo9Axis_MPU9250.MPU9250()
             accel = mpu9250.readAccel()
             
-            print( " ax = " , ( accel['x'] ))
-            print( " ay = " , ( accel['y'] ))
-            print( " az = " , ( accel['z'] ))
-            
+            # print( " ax = " , ( accel['x'] ))
+            # print( " ay = " , ( accel['y'] ))
+            # print( " az = " , ( accel['z'] ))
+            # coeff_accel=[1.00047918,-0.03098151]
+            #data.append(accel['x']*1.00047918-0.03098151)
             data.append(accel['x'])
+            #data.append(accel['y']*0.99873312-0.01384)
             data.append(accel['y'])
+            #data.append(accel['z']*0.98270031-0.06675811)
             data.append(accel['z'])
+
             
             gyro = mpu9250.readGyro()
-            print( " gx = " , ( gyro['x'] ))
-            print( " gy = " , ( gyro['y'] ))
-            print( " gz = " , ( gyro['z'] ))
+            #print( " gx = " , ( gyro['x'] ))
+            #print( " gy = " , ( gyro['y'] ))
+            #print( " gz = " , ( gyro['z'] ))
             
+            #data.append(gyro['x']-2.1239999999)
+            #data.append(gyro['y']+2.0618999999)
+            #data.append(gyro['z']-0.3989999999)
             data.append(gyro['x'])
             data.append(gyro['y'])
             data.append(gyro['z'])
 
-            mag = mpu9250.readMagnet()
-            print( " mx = " , ( mag['x'] ))
-            print( " my = " , ( mag['y'] ))
-            print( " mz = " , ( mag['z'] ))
-            
-            data.append(mag['x'])
-            data.append(mag['y'])
-            data.append(mag['z'])
 
-            time.sleep(0.1)
+
+            mag = mpu9250.readMagnet()
+            #print( " mx = " , ( mag['x'] ))
+            #print( " my = " , ( mag['y'] ))
+            #print( " mz = " , ( mag['z'] ))
+            
+            data.append(mag['x']-27.6585)
+            data.append(mag['y']-27.664)
+            data.append(mag['z']+48.41)
+
+            #time.sleep(0.1)
             return data
         except:
             return []
@@ -131,12 +140,12 @@ class imu_pipeline():
         if len(data)==0:
             return
             
-        self.states.aX = data[0]
-        self.states.aY = data[1]
-        self.states.aZ = data[2]
-        self.states.gX = data[3]
-        self.states.gY = data[4]
-        self.states.gZ = data[5]
+        self.states.aX = data[0] * 9.8
+        self.states.aY = data[1] * 9.8
+        self.states.aZ = data[2] * 9.8
+        self.states.gX = data[3] * 0.0174
+        self.states.gY = data[4] * 0.0174
+        self.states.gZ = data[5] * 0.0174
         self.states.mX = data[6]
         self.states.mY = data[7]
         self.states.mZ = data[8]

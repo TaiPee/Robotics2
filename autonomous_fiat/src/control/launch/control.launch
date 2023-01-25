@@ -1,0 +1,5 @@
+<launch>
+    <node name="control_node" pkg="controle_module" type="control_main.py" output="screen" respawn="true" respawn_delay="1" >
+        <rosparam file="$(find mymsgs)/config/config.yaml" />
+    </node>
+</launch>

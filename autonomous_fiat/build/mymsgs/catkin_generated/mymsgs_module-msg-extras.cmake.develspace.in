@@ -1,0 +1,2 @@
+set(mymsgs_module_MESSAGE_FILES "/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/mymsgs/msg/states.msg;/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/mymsgs/msg/control_command.msg;/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/mymsgs/msg/car_command.msg;/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/mymsgs/msg/ref_path.msg")
+set(mymsgs_module_SERVICE_FILES "")

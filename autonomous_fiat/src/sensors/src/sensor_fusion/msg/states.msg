@@ -1,0 +1,6 @@
+float64 X         # X-coordinate position in the world        (m)
+float64 Y         # Y-coordinate position in the world        (m)
+float64 Psi       # yaw angle of the car in the world         (rad)
+float64 vx        # longitudinal velocity in x, local frame   (m/s)
+float64 vy        # lateral velocity in y, local frame        (m/s)
+float64 r         # yaw rate                                  (rad/s)

@@ -49,8 +49,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  states.msg
-  control_command.msg
 )
 
 ## Generate services in the 'srv' folder

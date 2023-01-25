@@ -2,9 +2,9 @@
 Robotics course at Instituto Superior Tecnico, 2022/2023
 Laboratory 2 - Autonomous Driving 
 
-Code developed by the GUIDANCE team of Group ?:
+Code in this folder was developed by the GUIDANCE team:
  
-Bernardo Carvalho, 
+Bernardo Carvalho, 93028
 Rafael Jeronimo, 93163
 Tomás Líbano Monteiro, 93196
 """

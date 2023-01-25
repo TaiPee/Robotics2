@@ -137,7 +137,7 @@ with open(file_name) as data_file:
         pointsToPlotLon.append(predictedLon)
         
         
-            # plt.scatter(predictedLat, predictedLon)
+        # plt.scatter(predictedLat, predictedLon)
         # plt.scatter(currData["gps_lat"], currData["gps_lon"])
         # plt.pause(0.0001)
         # # plt.xlim([37, 41])

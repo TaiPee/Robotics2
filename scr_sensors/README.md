@@ -26,6 +26,25 @@ The code in this directory is organized into the following sub directories and f
 
 # Background
 
+
+
+### Inputs (Make sure IMU fixed in NED frame)
+1) Latitude, units are `rad`
+2) Longitude, units are `rad`
+3) Altitude, units are `m`
+4) Velocity (North), units are `m/s`
+5) Velocity (East), units are `m/s`
+6) Velocity (Down), units are `m/s`
+7) Accelarometer X, units are `m/s^2`
+8) Accelarometer Y, units are `m/s^2`
+9) Accelarometer Z, units are `m/s^2`
+10) Gyro X, units are `rad/s`
+11) Gyro Y, units are `rad/s`
+12) Gyro Z, units are `rad/s`
+13) Magnetometer X, units need to be consistant across all magnetometer measurements used (eg. mT)
+14) Magnetometer Y, units need to be consistant across all magnetometer measurements used (eg. mT)
+15) Magnetometer Z, units need to be consistant across all magnetometer measurements used (eg. mT)
+
 With an objective of enhancing the accuracy of GPS readings based on IMU reading an Extended Kalman Filter (EKF) was implemented.
 ## Extended Kalman Filter
 EKF to fuse GPS, IMU and encoder readings to estimate the pose and velocity of a ground vehicle in the navigation frame.
@@ -85,3 +104,8 @@ This simulation was based on the one performed by the Oregon State University fo
 ## GPS coordenates mapping on 
 
 # Conclusions
+
+
+## Credits
+* https://github.com/UASLab/OpenFlight/blob/master/FlightCode/navigation/EKF_15state_quat.c
+* https://github.com/FlyTheThings/uNavINS

@@ -6,7 +6,7 @@ import imageio.v2 as imageio
 from random import randint
 import os
 from copy import deepcopy
-from maps_processing.geonav_conversions import LLtoUTM
+from maps_processing import geonav_conversions as gc
 
 DEBUG_PRINT = False
 PLOT = True
@@ -335,7 +335,7 @@ def getGPSpoint(image_to_world_matrix):
     # get gps position
     # bea e isa e tiagão
     # put them in UTM coordinates
-    point = LLtoUTM(LLpoint[0], LLpoint[1])
+    point = gc.LLtoUTM(LLpoint[0], LLpoint[1])
     # put in image frame
     point = world2image(point, image_to_world_matrix)
     return point

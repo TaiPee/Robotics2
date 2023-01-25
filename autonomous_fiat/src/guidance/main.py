@@ -9,38 +9,35 @@ Rafael Jeronimo, 93163
 Tomás Líbano Monteiro, 93196
 """
 
+from find_path import io
+from find_path import image as img
+from find_path import search as srch
+from find_path import smooth_path as smth
 import cv2 as cv
-import aio as io
-import image as img
-import search as srch
-import smooth_path as smth
 import numpy as np
+import os
 
 ############################################################################################
 ############     CHANGE PARAMETERS BELLOW TO RUN SCRIPT DIRECTLY:    #######################
 ############################################################################################
 
 # define start and end point for each image in images (in image coord), if None, will be asked in the image
-START_POINTS = [(487902.91516208043, 4287516.813179664), None, None, None] 
-END_POINTS = [(488004.4493165874, 4287611.675840042), None, None, None] 
+START_POINTS = [(487902.91516208043, 4287516.813179664), None, None] 
+END_POINTS = [(488004.4493165874, 4287611.675840042), None, None] 
 
 # transformation matrices from image frame to inertial frame (real world frame) 
 R_MATRIX = [np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789570e+05],
-                      [-2.32154232e-01, -2.02335264e-04,  4.28772144e+06],
-                      [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
-            
-            np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789570e+05],
                       [-2.32154232e-01, -2.02335264e-04,  4.28772144e+06],
                       [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]), 
             None, 
             None] 
 
 # list images available
-FILENAMES = ['images/tecnico.png', 'images/tecnico_gordo.png' , 'images/path2.png', 'images/path3.jpg']
-FILENAMES_FILLED = ['images/tecnico_gordo.png', 'images/tecnico_gordo.png' , 'images/path2.png', 'images/path3.jpg']
+FILENAMES = ['images/tecnico.png', 'images/path1.jpg', 'images/path2.jpg']
+FILENAMES_FILLED = ['images/tecnico_gordo.png', 'images/path1.jpg', 'images/path2.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
-TO_PROCESS = [0]
+TO_PROCESS = [0, 1, 2]
 
 ############################################################################################
 ######################     HYPERPARAMETERS OF THE CODE     #################################
@@ -61,7 +58,7 @@ INTER_CLUSTER_DIST = 20 # maximum distance between 2 clusters to be considered n
 
 # debug_plot.py
 
-GIF = True # if True, will save a gif of the process, if False, will only save an image of the final result
+GIF = False # if True, will save a gif of the process, if False, will only save an image of the final result
 
 ############################################################################################
 ################################     MAIN     ##############################################
@@ -125,23 +122,27 @@ def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix
 
     ########## CHANGE COORDINATES AND SAVE TO FILE ##########
 
-    points_UTM_frame = io.image2world(points, r_matrix)
-    
-    # write yaml file
-    with open(filename.split('.')[0] + '.yaml', 'w') as f:
-        string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
-        f.write(string.replace('],', '],\n'))
-
-    with open('map.yaml', 'w') as f:
-        string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
-        f.write(string.replace('],', '],\n'))
-
     # write txt file (image frame) for comparison
-    with open(filename.split('.')[0] + '.txt', 'w') as f:
+    with open(filename.split('.')[0] + '_image_frame.txt', 'w') as f:
         for x,y in points:
             f.write(str(x) + ' ' + str(y) + '\n') 
 
-    return points_UTM_frame
+    if r_matrix is not None:
+        points_UTM_frame = io.image2world(points, r_matrix)
+        
+        # write yaml file to store
+        with open(filename.split('.')[0] + '.yaml', 'w') as f:
+            string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
+            f.write(string.replace('],', '],\n'))
+
+        # yaml used by control
+        with open('map.yaml', 'w') as f:
+            string = 'reference_path: '+ str([[x,y] for x,y in points_UTM_frame])
+            f.write(string.replace('],', '],\n'))
+            
+        points = points_UTM_frame
+        
+    return points        
 
 def testScript():
     """ This function is used to test the script. It will run the main function with the global variables set in this script. """
@@ -159,6 +160,10 @@ def testScript():
     for filename, filename_filled, start_point, end_point, r_matrix in zip(filenames, filenames_filled, start_points, end_points, r_matrices):
         print('Processing ' + filename)
         main(filename, filename_filled, start_point, end_point, points_ref = 'world_ref', r_matrix = r_matrix)
+        
+    # remove map.yaml
+    if os.path.exists('map.yaml'):
+        os.remove('map.yaml')
         
 if __name__ == "__main__":
     testScript()

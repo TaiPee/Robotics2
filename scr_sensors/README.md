@@ -6,7 +6,7 @@ To overcome the limitations of GNSS, this work presents a sensor fusion algorith
 
 # Equipment and Tools
 ## Hardware
-> - **Raspberry-Pi 4B**:
+> - **Raspberry-Pi 4B:**
 >  microprocessor used in this project is a low-cost, headless device that serves as the central processing unit of the system. It is responsible for running the sensor fusion algorithm and processing the data received from the IMU and GPS module.
 > - **Inertial Measurement Unit (IMU):**
 >  a sensor that measures the vehicle's angular velocity, linear acceleration, and magnetic field. It provides data on the vehicle's attitude, which is used in the sensor fusion algorithm.
@@ -15,7 +15,7 @@ To overcome the limitations of GNSS, this work presents a sensor fusion algorith
 ## Software
 > - **Ubuntu 20.04**
 > - **ROS Noetic**
-> is a specific version of the Robot Operating System (ROS) that is used in this project. It is an open-source software framework that enables communication between the sensors and the microprocessor. It also provides a platform for developing and testing autonomous systems.
+> is a specific version of the Robot Operating System (ROS) that is used in this project. It is an open-source software framework that enables communication between the sensors and the microprocessor. It also provides a platform for deploying and testing the system.
 
 # Code organization
 
@@ -26,21 +26,62 @@ The code in this directory is organized into the following sub directories and f
 
 # Background
 
+With an objective of enhancing the accuracy of GPS readings based on IMU reading an Extended Kalman Filter (EKF) was implemented.
+## Extended Kalman Filter
+EKF to fuse GPS, IMU and encoder readings to estimate the pose and velocity of a ground vehicle in the navigation frame.
+
+## 
+
 Scott's videos
 tutorial on how to implement an IMU using a conventional accelerometer, gyroscope, and magnetometer.
 [video](https://www.youtube.com/watch?v=T9jXoG0QYIA&t=573s)
 
 [video](https://www.youtube.com/watch?v=6M6wSLD-8M8&t=687s)
 
-# Methodology
 Qualitative comparison between GNSS and INS
 |                       	| GPS(GNSS) 	| IMS(INS) 	|
 |-----------------------	|--------------	|-------	|
-| location              	|            	|       	|
-| acquisition frequency 	|           	|       	|
-| accuracy short term   	|           	|       	|
+| acquisition frequency 	|  low         	|    high 	|
+| location              	|       values referenced to some absolute position     	|   subject to drift - accumulated error over time    	|
+| accuracy short term   	|  low         	|      high 	|
+
+# Methodology
+
+## Sensor Fusion Architecture
+
+```sequence {theme="hand"}
+Title: Extended Kalman Filter - functioning on a single axis
+Note over EKF: Prediction
+Note over IMU: high rate
+Note over GPS: low rate
+IMU->EKF: accelaration
+Note over EKF: Update
+GPS->EKF: position
+Note left of EKF: position &\n velocity 
+
+```
+
+## Calibration
+
+### IMU Calibration
+
+
+### GPS Calibration
+
 
 
 
 By default the library returns 3-tuple of X, Y, Z axis values for either acceleration, gyroscope and magnetometer ie compass. Default units are `m/s^2`, `rad/s`, `uT` and `°C`. It is possible to also get acceleration values in `g` and gyro values `deg/s`
+
 # Preliminary Results
+Before integrating the various components on the sensor system, individual tests were performed on each module to ensure understand and tune each proper functionality.
+
+
+## Roll Yaw and Pitch axes from IMU Sensor through a RVIZ ROS vizualization
+This simulation was based on the one performed by the Oregon State University found in this [video](https://www.youtube.com/watch?v=a-mfCeykmYw).
+
+
+
+## GPS coordenates mapping on 
+
+# Conclusions

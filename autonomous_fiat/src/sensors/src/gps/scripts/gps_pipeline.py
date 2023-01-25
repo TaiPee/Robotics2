@@ -22,6 +22,7 @@ class gps_pipeline():
         self.device = self.api.devices[1]
         self.states = States()
         self.index = 0
+        self.current_ts = 0
 
 
     def runAlgorithm(self):
@@ -68,18 +69,20 @@ class gps_pipeline():
         # for testing purposes
         data = States()
         location = self.device.location()
-        if location['positionType'] == 'GPS' and location['timeStamp'] != current_ts:
+        
+        if location['positionType'] == 'GPS' and location['timeStamp'] != self.current_ts:
             print(location['latitude'], location['longitude'])
             print(location['horizontalAccuracy'])
-            current_ts = location['timeStamp']
+            self.current_ts = location['timeStamp']
             #lat = location['latitude']
             #lon = location['longitude']
             #north, east, _ = LLtoUTM(lat, lon)
-            data.latitude = location['latitude']
-            data.longitude = location['longitude']
+            data.lat = location['latitude']
+            data.long = location['longitude']
             data.posCov = location['horizontalAccuracy'] * location['horizontalAccuracy']
+            return data
 
-        return data
+        return self.data
 
     def setStates(self, data):
         self.states.lat = data.lat

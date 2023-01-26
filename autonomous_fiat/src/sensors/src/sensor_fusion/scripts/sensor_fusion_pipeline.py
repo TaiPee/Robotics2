@@ -5,6 +5,10 @@ from datetime import time
 from std_msgs.msg import Header
 from geometry_msgs.msg import Quaternion, Vector3
 from sensor_msgs.msg import Imu, MagneticField
+import time
+from ekf import extended_kf
+from ekf_handle import *
+from geonav_conversions import *
 #from states.msg import states
 
 class States:
@@ -76,15 +80,30 @@ class sensor_fusion_pipeline():
         z = data.orientation.z
         w = data.orientation.w
 
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        yaw = math.atan2(t3, t4)
+        yaw, pitch, roll = quaternion_to_euler(x, y, z, w)
+        an, ae, ad = get_accelaration(self.state.aX, self.state.aY, self.state.aZ, yaw, pitch, roll)
+
+        # t3 = +2.0 * (w * z + x * y)
+        # t4 = +1.0 - 2.0 * (y * y + z * z)
+        # yaw = math.atan2(t3, t4)
 
         self.states.yaw = yaw
-        self.states.vx = 0.0
-        self.states.vy = 0.0
-        self.states.x = 0.0
-        self.states.y = 0.0
+        self.states.pitch = pitch
+        self.states.roll = roll
+        self.states.an = an
+        self.states.ae = ae
+        self.states.ad = ad
+
+        north, east, _ = LLtoUTM(data.latitude, data.longitude)
+        prev_north = self.states.x
+        prev_east = self.states.y
+        delta_t = 0.01
+
+        self.states.vx = (north - prev_north)/delta_t
+        self.states.vy = (east - prev_east)/delta_t
+        self.states.x = north
+        self.states.y = east
+        self.states.gps_acc = data.position_covariance
 
     def setIMU(self, data):
         self.imu.ax = data.linear_acceleration.x
@@ -97,6 +116,7 @@ class sensor_fusion_pipeline():
         self.imu.y = data.orientation.y
         self.imu.z = data.orientation.z
         self.imu.w = data.orientation.w
+        # data.header.stamp 
         #self.imu.covA = data.linear_acceleration_covariance
         #self.imu.covG = data.angulr_velocity_covariance
 
@@ -104,6 +124,10 @@ class sensor_fusion_pipeline():
         print('Ax = ' + str(self.imu.ax))
         print('Gx = ' + str(self.imu.gx))
         print('X  = ' + str(self.imu.x))
+        print(data.header.stamp)
+        print(data.linear_acceleration_covariance)
+        # print(data.linear_acceleration_covariance)
+        # print(data.angulr_velocity_covariance)
         return
 
     def setGPS(self,data):
@@ -117,5 +141,6 @@ class sensor_fusion_pipeline():
        
         print()
         return
+        
     def setLookAhead(self, data):
         pass

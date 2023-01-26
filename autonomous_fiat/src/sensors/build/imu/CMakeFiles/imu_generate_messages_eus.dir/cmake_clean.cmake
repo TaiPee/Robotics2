@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel/share/roseus/ros/imu/manifest.l"
+  "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/roseus/ros/imu/manifest.l"
   "CMakeFiles/imu_generate_messages_eus"
 )
 

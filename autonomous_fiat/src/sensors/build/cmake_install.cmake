@@ -1,8 +1,8 @@
-# Install script for directory: /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src
+# Install script for directory: /media/psf/Robotics2/autonomous_fiat/src/sensors/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install")
+  set(CMAKE_INSTALL_PREFIX "/media/psf/Robotics2/autonomous_fiat/src/sensors/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -49,94 +49,91 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/_setup_util.py")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/_setup_util.py")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/_setup_util.py")
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/_setup_util.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/env.sh")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/env.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/env.sh")
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/env.sh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/setup.bash;/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/local_setup.bash")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/setup.bash;/media/psf/Robotics2/autonomous_fiat/src/sensors/install/local_setup.bash")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.bash"
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.bash"
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.bash"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.bash"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/setup.sh;/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/local_setup.sh")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/setup.sh;/media/psf/Robotics2/autonomous_fiat/src/sensors/install/local_setup.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.sh"
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.sh"
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.sh"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.sh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/setup.zsh;/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/local_setup.zsh")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/setup.zsh;/media/psf/Robotics2/autonomous_fiat/src/sensors/install/local_setup.zsh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.zsh"
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.zsh"
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/setup.zsh"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/local_setup.zsh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install/.rosinstall")
+   "/media/psf/Robotics2/autonomous_fiat/src/sensors/install/.rosinstall")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/.rosinstall")
+file(INSTALL DESTINATION "/media/psf/Robotics2/autonomous_fiat/src/sensors/install" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/catkin_generated/installspace/.rosinstall")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/gtest/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_tools/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_complementary_filter/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_filter_madgwick/cmake_install.cmake")
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/rviz_imu_plugin/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/gtest/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/gps/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/cmake_install.cmake")
 
 endif()
 
@@ -148,5 +145,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

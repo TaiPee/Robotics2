@@ -1,4 +1,4 @@
-prefix=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel
+prefix=/media/psf/Robotics2/autonomous_fiat/src/sensors/devel
 
 Name: imu
 Description: Description of imu

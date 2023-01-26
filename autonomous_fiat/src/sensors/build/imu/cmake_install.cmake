@@ -1,8 +1,8 @@
-# Install script for directory: /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/imu
+# Install script for directory: /media/psf/Robotics2/autonomous_fiat/src/sensors/src/imu
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install")
+  set(CMAKE_INSTALL_PREFIX "/media/psf/Robotics2/autonomous_fiat/src/sensors/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,49 +38,49 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu/cmake" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu/cmake" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu-msg-paths.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel/share/roseus/ros/imu")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/roseus/ros/imu")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  execute_process(COMMAND "/usr/bin/python3" -m compileall "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/imu")
+  execute_process(COMMAND "/usr/bin/python3" -m compileall "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/imu")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/imu")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/imu")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu/cmake" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu/cmake" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu/cmake" TYPE FILE FILES
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imuConfig.cmake"
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imuConfig-version.cmake"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imuConfig.cmake"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imuConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/imu/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/src/imu/package.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_main.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_main.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_handle.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_handle.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_pipeline.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/imu" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/catkin_generated/installspace/imu_pipeline.py")
 endif()
 

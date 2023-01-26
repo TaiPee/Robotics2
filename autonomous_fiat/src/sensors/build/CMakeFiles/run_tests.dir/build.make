@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src
+CMAKE_SOURCE_DIR = /media/psf/Robotics2/autonomous_fiat/src/sensors/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build
+CMAKE_BINARY_DIR = /media/psf/Robotics2/autonomous_fiat/src/sensors/build
 
 # Utility rule file for run_tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/run_tests.dir/clean:
 .PHONY : CMakeFiles/run_tests.dir/clean
 
 CMakeFiles/run_tests.dir/depend:
-	cd /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /media/psf/Robotics2/autonomous_fiat/src/sensors/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /media/psf/Robotics2/autonomous_fiat/src/sensors/src /media/psf/Robotics2/autonomous_fiat/src/sensors/src /media/psf/Robotics2/autonomous_fiat/src/sensors/build /media/psf/Robotics2/autonomous_fiat/src/sensors/build /media/psf/Robotics2/autonomous_fiat/src/sensors/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run_tests.dir/depend
 

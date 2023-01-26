@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install")
+  set(CMAKE_INSTALL_PREFIX "/media/psf/Robotics2/autonomous_fiat/src/sensors/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/gtest/googlemock/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/gtest/googlemock/cmake_install.cmake")
 
 endif()
 

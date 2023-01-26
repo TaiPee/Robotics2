@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src
+CMAKE_SOURCE_DIR = /media/psf/Robotics2/autonomous_fiat/src/sensors/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build
+CMAKE_BINARY_DIR = /media/psf/Robotics2/autonomous_fiat/src/sensors/build
 
 # Utility rule file for imu_generate_messages_nodejs.
 
@@ -63,10 +63,10 @@ imu/CMakeFiles/imu_generate_messages_nodejs.dir/build: imu_generate_messages_nod
 .PHONY : imu/CMakeFiles/imu_generate_messages_nodejs.dir/build
 
 imu/CMakeFiles/imu_generate_messages_nodejs.dir/clean:
-	cd /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu && $(CMAKE_COMMAND) -P CMakeFiles/imu_generate_messages_nodejs.dir/cmake_clean.cmake
+	cd /media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu && $(CMAKE_COMMAND) -P CMakeFiles/imu_generate_messages_nodejs.dir/cmake_clean.cmake
 .PHONY : imu/CMakeFiles/imu_generate_messages_nodejs.dir/clean
 
 imu/CMakeFiles/imu_generate_messages_nodejs.dir/depend:
-	cd /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/imu /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/imu/CMakeFiles/imu_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /media/psf/Robotics2/autonomous_fiat/src/sensors/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /media/psf/Robotics2/autonomous_fiat/src/sensors/src /media/psf/Robotics2/autonomous_fiat/src/sensors/src/imu /media/psf/Robotics2/autonomous_fiat/src/sensors/build /media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu /media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/CMakeFiles/imu_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : imu/CMakeFiles/imu_generate_messages_nodejs.dir/depend
 

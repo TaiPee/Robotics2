@@ -1,8 +1,8 @@
-# Install script for directory: /home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion
+# Install script for directory: /media/psf/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install")
+  set(CMAKE_INSTALL_PREFIX "/media/psf/Robotics2/autonomous_fiat/src/sensors/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,29 +38,65 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion/msg" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion/msg/states.msg")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion/cmake" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion-msg-paths.cmake")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/include/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/roseus/ros/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/common-lisp/ros/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/gennodejs/ros/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  execute_process(COMMAND "/usr/bin/python3" -m compileall "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages/sensor_fusion")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion.pc")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion/cmake" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion/cmake" TYPE FILE FILES
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusionConfig.cmake"
-    "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusionConfig-version.cmake"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusionConfig.cmake"
+    "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusionConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion" TYPE FILE FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/sensor_fusion" TYPE FILE FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion/package.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_main.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_main.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_handle.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_handle.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_pipeline.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/sensor_fusion" TYPE PROGRAM FILES "/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/catkin_generated/installspace/sensor_fusion_pipeline.py")
 endif()
 

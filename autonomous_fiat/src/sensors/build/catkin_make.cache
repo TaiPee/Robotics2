@@ -1,2 +1,2 @@
-imu:imu_tools/imu_complementary_filter:imu_tools/imu_filter_madgwick:imu_tools/imu_tools:imu_tools/rviz_imu_plugin:sensor_fusion
--DCATKIN_DEVEL_PREFIX=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/devel -DCMAKE_INSTALL_PREFIX=/home/taipee/Documents/Robotics2/autonomous_fiat/src/sensors/install -G Unix Makefiles
+gps:imu:sensor_fusion
+-DCATKIN_DEVEL_PREFIX=/media/psf/Robotics2/autonomous_fiat/src/sensors/devel -DCMAKE_INSTALL_PREFIX=/media/psf/Robotics2/autonomous_fiat/src/sensors/install -G Unix Makefiles

@@ -35,29 +35,29 @@ class control_handle():
         self.pubSteeringAngle = rospy.Publisher('/steeringAngle_vis_topic', Float32, queue_size=1)
 
     def run(self):
-        if self.firstSensorRead == True:
-            self.pipeline.runAlgorithm()
-            controlCmd = self.pipeline.getControlCmd()
-            carCmd = self.pipeline.getCarCmd()
-            lookAheadLateralMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_lateral_index,'lateral')
-            lookAheadLongitudinalMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_longitudinal_index,'longitudinal')
-            self.pubControlCommand.publish(controlCmd)
-            self.pubCarCommand.publish(carCmd)
-
-            #Visualization
-            self.pubLooKAheadLateralVis.publish(lookAheadLateralMarker)
-            self.pubLooKAheadLongitudinalVis.publish(lookAheadLongitudinalMarker)
-            self.pubVelocity.publish(math.sqrt(self.pipeline.states.vx**2+self.pipeline.states.vy**2))
-            self.pubThrottle.publish(self.pipeline.carCmd.throttle)
-            self.pubSteeringAngle.publish(self.pipeline.controlCmd.steering)
+        # if self.firstSensorRead == True:
+        self.pipeline.runAlgorithm()
+        controlCmd = self.pipeline.getControlCmd()
+        carCmd = self.pipeline.getCarCmd()
+        lookAheadLateralMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_lateral_index,'lateral')
+        lookAheadLongitudinalMarker = self.pipeline.getLookAheadMarker(self.pipeline.look_ahead_point_longitudinal_index,'longitudinal')
+        self.pubControlCommand.publish(controlCmd)
+        self.pubCarCommand.publish(carCmd)
+        
+        #Visualization
+        self.pubLooKAheadLateralVis.publish(lookAheadLateralMarker)
+        self.pubLooKAheadLongitudinalVis.publish(lookAheadLongitudinalMarker)
+        self.pubVelocity.publish(math.sqrt(self.pipeline.states.vx**2+self.pipeline.states.vy**2))
+        self.pubThrottle.publish(self.pipeline.carCmd.throttle)
+        self.pubSteeringAngle.publish(self.pipeline.controlCmd.steering)
 
     def statesCallback(self, data):
         self.pipeline.setStates(data)
 
         # If first time execute guidance algorithm
-        if self.firstSensorRead == False:
-            self.pipeline.refPath = self.pipeline.setReferencePath(self.pipeline.pathToRefPath)
-            self.firstSensorRead = True
+        # if self.firstSensorRead == False:
+        #     self.pipeline.refPath = self.pipeline.setReferencePath(self.pipeline.pathToRefPath)
+        #     self.firstSensorRead = True
 
         
     def lookAheadCallback(self, data):

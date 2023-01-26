@@ -436,9 +436,6 @@ message_generation_DIR:PATH=/opt/ros/melodic/share/message_generation/cmake
 //The directory containing a CMake configuration file for message_runtime.
 message_runtime_DIR:PATH=/opt/ros/melodic/share/message_runtime/cmake
 
-//The directory containing a CMake configuration file for mymsgs.
-mymsgs_DIR:PATH=mymsgs_DIR-NOTFOUND
-
 //Value Computed by CMake
 mymsgs_module_BINARY_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/mymsgs
 

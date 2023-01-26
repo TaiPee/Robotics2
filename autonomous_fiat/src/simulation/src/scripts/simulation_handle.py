@@ -39,7 +39,7 @@ class simul_handle():
         self.pipeline.runSimulation(self.simul)
         # Car Model
         if self.simul!=0:
-            rospy.loginfo("Publishing car states")
+            # rospy.loginfo("Publishing car states")
             self.pubCarStates.publish(self.pipeline.odom)
         # Visualization
         self.pubVisCar.publish(self.pipeline.carVis)

@@ -84,7 +84,7 @@ class End:
 class Edge:
     def __init__(self, cluster):
         self.ends = [End(cluster[0]), End(cluster[-1])]
-        self.distance = sum([math.dist(cluster[i], cluster[i+1]) for i in range(len(cluster)-1)]) 
+        self.distance = sum([np.linalg.norm(np.array(cluster[i]) - np.array(cluster[i+1])) for i in range(len(cluster)-1)]) 
         self.cluster = cluster
         self.bad = False
 class Map:
@@ -166,7 +166,7 @@ class Map:
         group_ids = []
         for i in range(len(ends)):
             for j in range(i+1, len(ends)):
-                if math.dist(ends[i].location, ends[j].location) < neighbor_cluster_dist:
+                if np.linalg.norm(np.array(ends[i].location) - np.array(ends[j].location)) < neighbor_cluster_dist:
                     if ends[i].group_id is not None:
                         ends[j].group_id = ends[i].group_id
                     else:
@@ -253,11 +253,11 @@ def getStartEndIDs(map,start_point, end_point):
     start_dist = np.inf
     end_dist = np.inf
     for end in map.unique_ends:
-        dist = math.dist(end.location, start_point)
+        dist = np.linalg.norm(np.array(end.location) - np.array(start_point))
         if dist < start_dist:
             start_dist = dist
             start_id = end.id
-        dist = math.dist(end.location, end_point)
+        dist = np.linalg.norm(np.array(end.location) - np.array(end_point))
         if dist < end_dist:
             end_dist = dist
             end_id = end.id

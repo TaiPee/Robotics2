@@ -1,9 +1,0 @@
-# PID parameters
-K: 10.0
-I: 0.10
-
-# Controller
-look_ahead_time: 1:0
-
-# Map Directory
-map_dir: /home/autonomous_fiat/src/control/src/maps/trackdrive.yaml

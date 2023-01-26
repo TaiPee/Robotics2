@@ -3,20 +3,32 @@ K: 10.0
 I: 1.0
 
 # Controller
-look_ahead_time_longitudinal: 1.5
-look_ahead_time_lateral: 0.7
-min_look_ahead_distance: 1.0
-max_speed: 6.0
-min_speed: 1.0
-k_filter_1: 0.6
-k_filter_2: 0.4
+look_ahead_time_longitudinal: 2.5
+look_ahead_time_lateral: 1.1
+min_look_ahead_distance: 3.0
+max_speed: 4.0
+min_speed: 1.5
+b_filter_throttle : [
+    0.159341287490797096,
+    0.681317425018405753,
+    0.159341287490797096,
+]
+b_filter_steering: [
+    0.159341287490797096,
+    0.681317425018405753,
+    0.159341287490797096,
+]
+
+
 
 # Map Directory
-map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/trackdrive.yaml
+# map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/trackdrive.yaml
 # map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/test_map.yaml
+# map_dir: '/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path/images/tecnico.yaml'
+map_dir: 0
 
 # Simulation
-simul: 2 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
+simul: 1 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
 
 # Car paarmeters
 car_parameters:

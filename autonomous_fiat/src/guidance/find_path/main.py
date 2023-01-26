@@ -1,3 +1,4 @@
+#!/home/david/anaconda3/envs/robotics/bin/python
 """ 
 Robotics course at Instituto Superior Tecnico, 2022/2023
 Laboratory 2 - Autonomous Driving 
@@ -6,7 +7,7 @@ Code developed by the GUIDANCE team of Group ?:
  
 Bernardo Carvalho, 
 Rafael Jeronimo, 93163
-Tomás Líbano Monteiro, 93196
+Tomas Libano Monteiro, 93196
 """
 
 import cv2 as cv
@@ -159,4 +160,5 @@ def testScript():
         main(filename, filename_filled, start_point, end_point, points_ref = 'world_ref', r_matrix = r_matrix)
         
 if __name__ == "__main__":
-    testScript()
+    #testScript()
+    main('src/guidance/find_path/images/tecnico.png','src/guidance/find_path/images/tecnico_gordo.png',None,None,'world_ref',R_MATRIX[0])

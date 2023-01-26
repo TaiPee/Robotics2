@@ -6,19 +6,20 @@ from mymsgs_module.msg import control_command, car_command, states
 import yaml
 import matplotlib.pyplot as plt
 from visualization_msgs.msg import Marker
-import sys
-sys.path.append('/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/')
-from find_path import main as guidance
+# import sys
+# sys.path.append('/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path')
+# from main import *
 
+# Image to UTM conversion
 R_MATRIX = np.array([[-2.02335264e-04,  2.32154232e-01,  4.87789686e+05],
                       [-2.32154232e-01, -2.02335264e-04,  4.28772133e+06],
                       [ 0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
 
 class States:
-    def __init__(self):
-        self.X = 0.0
-        self.Y = 0.0
-        self.Psi = 0.0
+    def __init__(self,refPath):
+        self.X = refPath[0,0]
+        self.Y = refPath[0,1]
+        self.Psi = np.arctan2(refPath[1,1]-refPath[0,1],refPath[1,0]-refPath[0,0])
         self.vx = 0.0
         self.vy = 0.0
         self.r = 0.0
@@ -44,12 +45,18 @@ class control_pipeline():
         self.throttle_PID = control_pid.throttle_PID(K,I)
 
         self.simul = rospy.get_param("simul")
-        if self.simul == 0:
-            self.pathToRefPath = '../maps/map.yaml'
-        elif self.simul == 1 or self.simul == 2:
-            self.pathToRefPath = rospy.get_param("map_dir")
+        self.map_dir = rospy.get_param("map_dir")
+        if self.map_dir == 0:
+            self.pathToRefPath = 'map.yaml'
+            self.refPath = np.array(rospy.get_param("reference_path"))
         else:
-            rospy.logerr("Simul parameter not set correctly")
+            self.pathToRefPath = self.map_dir
+            self.refPath = self.setReferencePath(self.pathToRefPath)
+
+        # self.refPath = self.setReferencePath(self.pathToRefPath)
+        
+        #self.pathToRefPath = '/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path/images/tecnico.yaml'
+
 
         self.lookAheadTimeLateral = rospy.get_param("look_ahead_time_lateral")
         self.lookAheadTimeLongitudinal = rospy.get_param("look_ahead_time_longitudinal")
@@ -58,17 +65,19 @@ class control_pipeline():
         self.minSpeed = rospy.get_param("min_speed")
         self.k_filter_1 = rospy.get_param("k_filter_1")
         self.k_filter_2 = rospy.get_param("k_filter_2")
+        self.b_filter_throttle = rospy.get_param("b_filter_throttle")
+        self.b_filter_steering = rospy.get_param("b_filter_steering")
 
         # Variables
-        self.states = States()
+        self.states = States(self.refPath)
         self.car = Car()
         self.controlCmd = control_command()
-        self.carCmd = car_command()
-        # self.refPath = self.setReferencePath(self.pathToRefPath)
-        self.refPath = None
+        self.carCmd = car_command()   
+        # self.refPath = None
         self.look_ahead_point_lateral_index = 0
         self.look_ahead_point_longitudinal_index = 0
-        self.throttle_prev = 0.0
+        self.throttle_prev = np.zeros(3)
+        self.steering_prev = np.zeros(3)
         
 
 
@@ -90,11 +99,19 @@ class control_pipeline():
         """ LATERAL CONTROLLER """ 
     
         # Get the steering angle according to fiat punto
-        delta = np.clip(math.atan((2*self.car.L*math.sin(alpha_lateral))/ld_lateral),-0.61,0.61) #V Values from fiat punto model
+        delta = math.atan((2*self.car.L*math.sin(alpha_lateral))/ld_lateral)
+        delta = np.clip(delta,-0.61,0.61) #V Values from fiat punto model
 
+        delta = self.steering_prev[0] * self.b_filter_steering[0] + self.steering_prev[1] * self.b_filter_steering[1] + delta * self.b_filter_steering[2]
+        
         # Get steering to messages
         self.controlCmd.steering = delta
         self.carCmd.steering = delta
+
+        self.steering_prev = np.delete(self.steering_prev,0) #remove the first value
+        self.steering_prev = np.append(self.steering_prev, self.carCmd.steering) #add a new value
+
+        # rospy.loginfo("Delta: %f prev_1: %f prev_2: %f",delta,self.steering_prev[1],self.steering_prev[2])
 
         """ LONGITUDINAL CONTROLLER """ 
 
@@ -107,21 +124,26 @@ class control_pipeline():
         self.controlCmd.velocity = vel_ref
 
         throttle = self.throttle_PID.calculateThrottle(vel_ref, math.sqrt(self.states.vx**2+self.states.vy**2))
-        throttle = np.clip(throttle,-1.0,1.0)
-        self.carCmd.throttle = throttle * self.k_filter_1 + self.throttle_prev * (1 - self.k_filter_1)
+        # throttle = np.clip(throttle,-1.0,1.0)
 
-        self.throttle_prev = self.carCmd.throttle
+        # rospy.loginfo("Filter: %f %f %f", self.b_filter_steering[0], self.b_filter_steering[1], self.b_filter_steering[2])
+
+        # self.carCmd.throttle = self.throttle_prev[0] * self.b_filter_throttle[0] + self.throttle_prev[1] * self.b_filter_throttle[1] + self.throttle_prev[2] * self.b_filter_throttle[2] + self.throttle_prev[3] * self.b_filter_throttle[3] +  throttle * self.b_filter_throttle[4] 
+        self.carCmd.throttle = self.throttle_prev[0] * self.b_filter_throttle[0] + self.throttle_prev[1] * self.b_filter_throttle[1] + throttle * self.b_filter_throttle[2] 
+
+        self.throttle_prev = np.delete(self.throttle_prev,0) #remove the first value
+        self.throttle_prev = np.append(self.throttle_prev, self.carCmd.throttle) #add a new value
 
     
     '''AUXILIARY FUNCTIONS'''
 
     def setReferencePath(self, pathToRefPath):
         # Execute guidance algorithm
-        guidance.main('images/tecnico.png','images/tecnico_gordo.png',None,None,'world_ref',R_MATRIX)
+        #main('/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path/images/tecnico.png','/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path/images/tecnico.png',None,None,'world_ref',R_MATRIX)
 
         # Read YAML file
         with open(pathToRefPath, 'r') as file:
-            points = yaml.safe_load(file)
+            points = yaml.load(file, Loader=FullLoader)
 
             #Save in numpy array
             points = np.array([v for v in points['reference_path']])
@@ -191,9 +213,9 @@ class control_pipeline():
         marker.header.stamp = rospy.Time.now()
         marker.type = marker.SPHERE
         marker.action = marker.ADD
-        marker.scale.x = 0.5
-        marker.scale.y = 0.5
-        marker.scale.z = 0.5
+        marker.scale.x = 0.8
+        marker.scale.y = 0.8
+        marker.scale.z = 0.8
         marker.color.a = 1.0
         marker.color.g = 0.0
         if type == 'lateral':
@@ -205,8 +227,8 @@ class control_pipeline():
         else:
             rospy.logerr("Type of look ahead point not defined")
         marker.pose.orientation.w = 1.0
-        marker.pose.position.x = self.refPath[look_ahead_point_index,0]
-        marker.pose.position.y = self.refPath[look_ahead_point_index,1]
+        marker.pose.position.x = self.refPath[look_ahead_point_index,0] - self.refPath[0,0]
+        marker.pose.position.y = self.refPath[look_ahead_point_index,1] - self.refPath[0,1]
         marker.pose.position.z = 0.0
         marker.lifetime = rospy.Duration()
         return marker

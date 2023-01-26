@@ -18,7 +18,7 @@ CAR_WIDTH=1
 CAR_HEIGHT=1
 VISUALIZE = True
 
-def get_path_vector(file_name:str)-> np.ndarray:
+def get_path_vector(file_name):
     # Load the data from the .txt file
     path_data = np.loadtxt(file_name)
 
@@ -34,7 +34,7 @@ def get_path_vector(file_name:str)-> np.ndarray:
 
     return downsample_path
 
-def create_binary_map(file_name: str) -> np.ndarray:
+def create_binary_map(file_name):
     # Load the image and convert to grayscale
     im = Image.open(file_name).convert("L")
     im_array = np.array(im)
@@ -51,11 +51,11 @@ def create_binary_map(file_name: str) -> np.ndarray:
     return im_array
 
 class Car:
-    def __init__(self, width: float, length: float):
+    def __init__(self, width, length):
         self.width = width
         self.length = length
 
-def create_car(width: float, length: float) -> Car:
+def create_car(width, length):
     return Car(width, length)
 
 def smooth_path(path, weight_data, weight_smooth, tolerance):
@@ -75,7 +75,7 @@ def smooth_path(path, weight_data, weight_smooth, tolerance):
     return newpath
 
 def check_path_limits(binary_map, car_length, car_width, smooth_path):
-    for i in range(1, 88):
+    for i in range(1, len(smooth_path)):
         #len(smooth_path)-2
         current_position = smooth_path[i-1]
         next_position = smooth_path[i]
@@ -143,7 +143,7 @@ def check_path_limits(binary_map, car_length, car_width, smooth_path):
                 
     return smooth_path
 
-def visualize_path(path: np.ndarray, car: Car, binary_map: np.ndarray, smooth_path: np.ndarray):
+def visualize_path(path, car, binary_map, smooth_path):
         
     # make path into a numpy array
     path = np.array(path)

@@ -9,9 +9,9 @@ from mymsgs_module.msg import control_command, car_command, states
 
 class States:
     def __init__(self):
-        self.X = 0.0
-        self.Y = 0.0
-        self.Psi = 0.0
+        self.X = self.refPath[0,0]
+        self.Y = self.refPath[0,1]
+        self.Psi = np.arctan2(self.refPath[1,1]-self.refPath[0,1],self.refPath[1,0]-self.refPath[0,0])
         self.vx = 0.0
         self.vy = 0.0
         self.r = 0.0
@@ -33,11 +33,22 @@ class Car:
 
 class simul_pipeline():
     def __init__(self):
-        self.pathToRefPath = rospy.get_param("map_dir")
-        self.refPath = self.setReferencePath()
+        self.map_dir = rospy.get_param("map_dir")
+        if self.map_dir == 0:
+            self.pathToRefPath = 'map.yaml'
+            self.refPath = np.array(rospy.get_param("reference_path"))
+        else:
+            self.pathToRefPath = self.map_dir
+            self.refPath = self.setReferencePath(self.pathToRefPath)
+        
+        #self.pathToRefPath = '/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/guidance/find_path/images/tecnico.yaml'
+        # self.refPath = self.setReferencePath()
         self.refPathVis = self.setReferencePathMarkers()
         self.carVis = Marker()
         self.odom = states()
+        self.odom.X = self.refPath[0,0]
+        self.odom.Y = self.refPath[0,1]
+        self.odom.Psi = np.arctan2(self.refPath[1,1]-self.refPath[0,1],self.refPath[1,0]-self.refPath[0,0])
         self.car = Car()
         self.controlCommand = control_command()
         self.carCommand = car_command()
@@ -64,8 +75,8 @@ class simul_pipeline():
         self.carVis.type = self.carVis.CUBE
         self.carVis.id = 0
         self.carVis.action = self.carVis.ADD
-        self.carVis.pose.position.x = self.odom.X
-        self.carVis.pose.position.y = self.odom.Y
+        self.carVis.pose.position.x = self.odom.X - self.refPath[0,0]
+        self.carVis.pose.position.y = self.odom.Y - self.refPath[0,1]
         self.carVis.pose.position.z = 0.0
         self.carVis.pose.orientation.x = q[0]
         self.carVis.pose.orientation.y = q[1]
@@ -81,7 +92,7 @@ class simul_pipeline():
     def setReferencePath(self):
         # Read YAML file
         with open(self.pathToRefPath, 'r') as file:
-            points = yaml.safe_load(file)
+            # points = yaml.load(file, Loader=FullLoader)
 
             #Save in numpy array
             points = np.array([v for v in points['reference_path']])
@@ -94,14 +105,14 @@ class simul_pipeline():
         marker.header.stamp = rospy.Time.now()
         marker.type = marker.LINE_STRIP # LINE_STRIP
         marker.action = marker.ADD
-        marker.scale.x = 0.1
+        marker.scale.x = 0.3
         marker.color.a = 1.0
         marker.color.g = 1.0
         marker.lifetime = rospy.Duration()
         for refPoint in self.refPath:
             point = Point()
-            point.x = refPoint[0]
-            point.y = refPoint[1]
+            point.x = refPoint[0] - self.refPath[0,0]
+            point.y = refPoint[1] - self.refPath[0,1]
             marker.points.append(point)
 
         return marker
@@ -112,7 +123,7 @@ class simul_pipeline():
 
         F = self.car.MaxTorque * 4 * self.car.GR / self.car.r_wheel * self.car.eta * throttle #- 0.5*self.car.aero_drag*(self.odom.vx**2) # Longitudinal Force
 
-        rospy.loginfo("F: %f",F)
+        # rospy.loginfo("F: %f",F)
 
         Beta = math.atan(self.car.Lr*math.tan(steering)/self.car.L) # Side Slip Angle
 
@@ -124,7 +135,7 @@ class simul_pipeline():
         velocity = math.sqrt(self.odom.vx**2 + self.odom.vy**2) + F/self.car.m *integrator_step
         self.odom.vx = velocity*math.cos(Beta) #- 0.5*self.car.aero_drag*(self.odom.vx**2)
         self.odom.vy = velocity*math.sin(Beta)
-        rospy.loginfo('vx: %f, vy: %f',self.odom.vx, self.odom.vy)
+        # rospy.loginfo('vx: %f, vy: %f',self.odom.vx, self.odom.vy)
 
         
 

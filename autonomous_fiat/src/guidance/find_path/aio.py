@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import imageio.v2 as imageio
+# import imageio.v2 as imageio
 from random import randint
 import os
 from copy import deepcopy
@@ -30,34 +30,35 @@ def debugPrint(text):
 
 def printWindow(original_src, point, text=None, window_size=5):
     """print a window around a point"""
-    if not DEBUG_PRINT:
-        return
+    pass
+    # if not DEBUG_PRINT:
+    #     return
 
-    src = original_src.copy()
-    src[src == 255] = 1 
-    src[point] = 7  
+    # src = original_src.copy()
+    # src[src == 255] = 1 
+    # src[point] = 7  
 
-    if text is not None:
-        print('\n',text,'\n')
-    else:
-        print('\nWindow around point: ', point)
+    # if text is not None:
+    #     print('\n',text,'\n')
+    # else:
+    #     print('\nWindow around point: ', point)
     
-    print('    ', end=' ')
+    # # print('    ', end=' ')
 
-    # print column numbers
-    for j in range(point[1] - window_size, point[1] + window_size + 1):
-        if not outOfBorders(src, (point[0], j)):
-            print(f'{j:03d}', end='  ')
-    print()
+    # # print column numbers
+    # for j in range(point[1] - window_size, point[1] + window_size + 1):
+    #     if not outOfBorders(src, (point[0], j)):
+    #         print(f'{j:03d}', end='  ')
+    # print()
 
-    # print row numbers and values
-    for i in range(point[0] - window_size, point[0] + window_size + 1):
-        if not outOfBorders(src, (i, point[1])):
-            print('\n',f'{i:03d}', end=' ')
-        for j in range(point[1] - window_size, point[1] + window_size + 1):
-            if not outOfBorders(src, (i,j)):
-                print(src[i,j], end='   ')
-    print() 
+    # # print row numbers and values
+    # for i in range(point[0] - window_size, point[0] + window_size + 1):
+    #     if not outOfBorders(src, (i, point[1])):
+    #         print('\n',f'{i:03d}', end=' ')
+    #     for j in range(point[1] - window_size, point[1] + window_size + 1):
+    #         if not outOfBorders(src, (i,j)):
+    #             print(src[i,j], end='   ')
+    # print() 
 
 ########################### PLOTTING ###########################
 
@@ -152,57 +153,57 @@ def plotClusters(clusters, shape, title=None, draw_points = False, pointRadius =
 
 def plotPoints(map, original_points, start_id, end_id, img_name, save_name = 'trajectory', gif = False, remove_files = True):
     """plot points on image and save trajectory as a gif."""
-
+    pass
     
-    if gif:
-        n_points = GIF_POINTS
-    else:
-        n_points = NO_GIF_POINTS
-    # downsample points for speed (if gif, even more)
-    points = [original_points[i] for i in range(0, len(original_points), int(len(original_points) / n_points))]
+    # if gif:
+    #     n_points = GIF_POINTS
+    # else:
+    #     n_points = NO_GIF_POINTS
+    # # downsample points for speed (if gif, even more)
+    # points = [original_points[i] for i in range(0, len(original_points), int(len(original_points) / n_points))]
 
-    # plot image represented in file img_name as background in plt object
-    img = cv.imread(img_name)
-    plt.imshow(img)
+    # # plot image represented in file img_name as background in plt object
+    # img = cv.imread(img_name)
+    # plt.imshow(img)
     
-    for end in map.unique_ends:
-        # plot ends ids in their location
-        y,x = end.location
-        plt.text(x, y, end.id, color='blue')
+    # for end in map.unique_ends:
+    #     # plot ends ids in their location
+    #     y,x = end.location
+    #     plt.text(x, y, end.id, color='blue')
 
-    plt.title('Trajectory from ' + str(start_id) + ' to ' + str(end_id))
+    # plt.title('Trajectory from ' + str(start_id) + ' to ' + str(end_id))
 
-    filenames = ['original.png']
-    if gif and save_name is not None:
-        plt.savefig(filenames[0])
+    # filenames = ['original.png']
+    # if gif and save_name is not None:
+    #     plt.savefig(filenames[0])
 
-    color = 'red'
-    for i,(y,x) in enumerate(points):
-        filename = f'{i}.png'
-        filenames.append(filename)
-        # plot points with size 1
-        plt.scatter( x, y, c = color, s=POINTS_SIZE)
-        if gif and save_name is not None:
-            plt.savefig(filename)
+    # color = 'red'
+    # for i,(y,x) in enumerate(points):
+    #     filename = str(i) + '.png'
+    #     filenames.append(filename)
+    #     # plot points with size 1
+    #     plt.scatter( x, y, c = color, s=POINTS_SIZE)
+    #     if gif and save_name is not None:
+    #         plt.savefig(filename)
 
-    if save_name is not None:
-        plt.savefig(save_name + '.png')
-    if PLOT:
-        plt.show()
+    # if save_name is not None:
+    #     plt.savefig(save_name + '.png')
+    # if PLOT:
+    #     plt.show()
 
-    # build gif
-    if gif and save_name is not None:
-        with imageio.get_writer(save_name + '.gif', mode='I') as writer:
-            for filename in filenames:
-                image = imageio.imread(filename)
-                writer.append_data(image)         
-        # remove files
-        if remove_files:
-            for filename in set(filenames):
-                os.remove(filename)
+    # # build gif
+    # if gif and save_name is not None:
+    #     with imageio.get_writer(save_name + '.gif', mode='I') as writer:
+    #         for filename in filenames:
+    #             image = imageio.imread(filename)
+    #             writer.append_data(image)         
+    #     # remove files
+    #     if remove_files:
+    #         for filename in set(filenames):
+    #             os.remove(filename)
                 
 
-    plt.close()
+    # plt.close()
 
 def myPlot(src, title, cmap='gray_r', save_name = None):
     """plot image"""

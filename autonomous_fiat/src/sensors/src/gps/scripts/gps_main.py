@@ -9,7 +9,7 @@ def main():
     
 
     try:
-        api = PyiCloudService('blourenco217@gmail.com', 'applexecDIP853')
+        api = PyiCloudService('', '')
     except KeyboardInterrupt:
         exit()
 

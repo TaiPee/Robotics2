@@ -61,6 +61,8 @@ class sensor_fusion_pipeline():
         self.plot_map = True
 
         if self.plot_map:
+            self.plot_gps_lat = []
+            self.plot_gps_lon = []
             self.plot_lan = []
             self.plot_lon = []
 
@@ -89,7 +91,7 @@ class sensor_fusion_pipeline():
         
 
         # print(time.time() - self.starting_time)
-        if (time.time() - self.starting_time) > 200:
+        if (time.time() - self.starting_time) > 140:
             # print('Performing the plot.')
             # for i in range(len(self.plot_x)):
             #     plt.scatter(self.plot_x[i], self.plot_y[i])
@@ -100,6 +102,7 @@ class sensor_fusion_pipeline():
                 apikey = 'AIzaSyDHA7vBHxV3OZyOIGmMWqkz1rp7bcrRbBw'
                 gmap = gmplot.GoogleMapPlotter(self.plot_lan[0], self.plot_lon[0], 18, apikey=apikey)
                 gmap.scatter(self.plot_lan, self.plot_lon, color='#507af8', size=5, marker=False)
+                gmap.scatter(self.plot_gps_lat, self.plot_gps_lon, color='#FF5733', size=5, marker=False)
                 gmap.draw('map.html')
                 exit()
                    
@@ -166,6 +169,10 @@ class sensor_fusion_pipeline():
             lat, lon = UTMtoLL(self.states.x, self.states.y, '29S')
             self.plot_lan.append(lat)
             self.plot_lon.append(lon)
+        if self.plot_map:
+            lat, lon = UTMtoLL(north, east, '29S')
+            self.plot_gps_lat.append(lat)
+            self.plot_gps_lon.append(lon)
         
         plt.scatter(self.states.x, self.states.y)
         plt.scatter(north, east, color = 'black', marker='^')

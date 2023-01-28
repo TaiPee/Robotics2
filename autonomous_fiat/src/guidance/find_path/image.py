@@ -2,7 +2,14 @@ from shapely.geometry import LineString
 import cv2 as cv
 import numpy as np
 import math
-import aio as io
+from . import io 
+
+def outOfBorders(src, point):
+    """check if point is outside the borders of the image"""
+    if point[0] < 0 or point[0] >= src.shape[0] or point[1] < 0 or point[1] >= src.shape[1]:
+        return True
+    else:
+        return False
 
 ########################### IMAGE PROCESSING ###########################
 
@@ -51,7 +58,7 @@ def neighbors(src, point, window_size=1, ordered_by_dist=False):
     for i in range(point[0] - window_size, point[0] + window_size+1):
         for j in range(point[1] - window_size, point[1] + window_size+1):
             if (    (i,j) != point  
-                    and not io.outOfBorders(src, (i,j)) 
+                    and not outOfBorders(src, (i,j)) 
                     and src[i,j] == 255):
                 neighbors.append((i,j))
     

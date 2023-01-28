@@ -1,0 +1,8 @@
+prefix=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/install
+
+Name: imu
+Description: Description of imu
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib -limu
+Requires: message_generation geometry_msgs rospy sensor_msgs std_msgs

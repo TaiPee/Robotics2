@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /media/psf/Robotics2/autonomous_fiat/src/sensors/devel/setup.sh

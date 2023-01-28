@@ -1,7 +1,7 @@
 .vscode
 autonomous_fiat/src/guidance/find_path/__pycache__/
 autonomous_fiat/src/guidance/maps_processing/__pycache__/
-autonomous_fiat/src/guidance/find_path/images/*_path.png
-autonomous_fiat/src/guidance/find_path/images/*.txt
-autonomous_fiat/src/guidance/find_path/images/*.yaml
-autonomous_fiat/src/guidance/find_path/images/*.gif
+autonomous_fiat/src/guidance/images/*_path.png
+autonomous_fiat/src/guidance/images/*.txt
+autonomous_fiat/src/guidance/images/*.yaml
+autonomous_fiat/src/guidance/images/*.gif

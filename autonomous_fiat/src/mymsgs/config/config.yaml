@@ -1,13 +1,13 @@
 # PID parameters
-K: 10.0
-I: 1.0
+K: 0.1
+I: 0.0000
 
 # Controller
-look_ahead_time_longitudinal: 2.5
+look_ahead_time_longitudinal: 3.5
 look_ahead_time_lateral: 1.1
-min_look_ahead_distance: 3.0
-max_speed: 4.0
-min_speed: 1.5
+min_look_ahead_distance: 3.5
+max_speed: 5.0
+min_speed: 2.5
 b_filter_throttle : [
     0.159341287490797096,
     0.681317425018405753,
@@ -26,7 +26,7 @@ b_filter_steering: [
 map_dir: 0
 
 # Simulation
-simul: 1 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
+simul: 2 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
 latitude: 38.737097
 longitude: -9.138015
 altitude: 92
@@ -43,5 +43,7 @@ car_parameters:
   aero_drag: 0.34
   r_wheel: 0.292
   MaxTorque: 165 #Nm
-  GR: 10 #0.87
+  GR: 5 #0.87
   eta: 0.85 #effiency
+  Cr: 0.01
+  BrakingTorque: 300

@@ -424,6 +424,15 @@ googletest-distribution_IS_TOP_LEVEL:STATIC=OFF
 googletest-distribution_SOURCE_DIR:STATIC=/usr/src/googletest
 
 //Value Computed by CMake
+gps_BINARY_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/sensors/src/gps
+
+//Value Computed by CMake
+gps_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+gps_SOURCE_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/sensors/src/gps
+
+//Value Computed by CMake
 gtest_BINARY_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/gtest/googlemock/gtest
 
 //Value Computed by CMake
@@ -456,6 +465,15 @@ gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //The directory containing a CMake configuration file for image_transport.
 image_transport_DIR:PATH=/opt/ros/melodic/share/image_transport/cmake
+
+//Value Computed by CMake
+imu_BINARY_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/sensors/src/imu
+
+//Value Computed by CMake
+imu_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+imu_SOURCE_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/sensors/src/imu
 
 //The directory containing a CMake configuration file for interactive_markers.
 interactive_markers_DIR:PATH=/opt/ros/melodic/share/interactive_markers/cmake
@@ -546,6 +564,15 @@ rviz_satellite_LIB_DEPENDS:STATIC=general;Qt5::Core;general;Qt5::Gui;general;Qt5
 
 //Value Computed by CMake
 rviz_satellite_SOURCE_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/rviz_satellite
+
+//Value Computed by CMake
+sensor_fusion_BINARY_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/sensors/src/sensor_fusion
+
+//Value Computed by CMake
+sensor_fusion_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+sensor_fusion_SOURCE_DIR:STATIC=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/sensors/src/sensor_fusion
 
 //The directory containing a CMake configuration file for sensor_msgs.
 sensor_msgs_DIR:PATH=/opt/ros/melodic/share/sensor_msgs/cmake
@@ -706,7 +733,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=8
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

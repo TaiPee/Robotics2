@@ -92,7 +92,7 @@ class control_pipeline():
 
         # Angle between the car and the look ahead point and the distance between the 2 
         [alpha_lateral,ld_lateral] = self.getAngleAndDist(self.look_ahead_point_lateral_index) 
-        [alpha_longitudinal,ld_longitudinal] = self.getAngleAndDist(self.look_ahead_point_lateral_index) 
+        [alpha_longitudinal,ld_longitudinal] = self.getAngleAndDist(self.look_ahead_point_longitudinal_index) 
 
         """ LATERAL CONTROLLER """ 
     
@@ -122,15 +122,21 @@ class control_pipeline():
         self.controlCmd.velocity = vel_ref
 
         throttle = self.throttle_PID.calculateThrottle(vel_ref, math.sqrt(self.states.vx**2+self.states.vy**2))
-        # throttle = np.clip(throttle,-1.0,1.0)
+        throttle = np.clip(throttle,-1.0,1.0)
+        if abs(alpha_longitudinal) >= np.pi/2:
+            throttle = -1.0
+        elif ld_longitudinal < self.minLookAheadDist:
+            throttle = -1.0
+
+        self.carCmd.throttle = throttle
 
         # rospy.loginfo("Filter: %f %f %f", self.b_filter_steering[0], self.b_filter_steering[1], self.b_filter_steering[2])
 
         # self.carCmd.throttle = self.throttle_prev[0] * self.b_filter_throttle[0] + self.throttle_prev[1] * self.b_filter_throttle[1] + self.throttle_prev[2] * self.b_filter_throttle[2] + self.throttle_prev[3] * self.b_filter_throttle[3] +  throttle * self.b_filter_throttle[4] 
-        self.carCmd.throttle = self.throttle_prev[0] * self.b_filter_throttle[0] + self.throttle_prev[1] * self.b_filter_throttle[1] + throttle * self.b_filter_throttle[2] 
+        # self.carCmd.throttle = self.throttle_prev[0] * self.b_filter_throttle[0] + self.throttle_prev[1] * self.b_filter_throttle[1] + throttle * self.b_filter_throttle[2] 
 
-        self.throttle_prev = np.delete(self.throttle_prev,0) #remove the first value
-        self.throttle_prev = np.append(self.throttle_prev, self.carCmd.throttle) #add a new value
+        # self.throttle_prev = np.delete(self.throttle_prev,0) #remove the first value
+        # self.throttle_prev = np.append(self.throttle_prev, self.carCmd.throttle) #add a new value
 
     
     '''AUXILIARY FUNCTIONS'''

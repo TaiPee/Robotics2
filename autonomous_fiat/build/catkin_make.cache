@@ -1,2 +1,2 @@
-control/src:mymsgs:rviz_satellite:simulation/src
+control/src:mymsgs:rviz_satellite:sensors/src/gps:sensors/src/imu:sensors/src/sensor_fusion:simulation/src
 -DCATKIN_DEVEL_PREFIX=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/devel -DCMAKE_INSTALL_PREFIX=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/install -G Unix Makefiles

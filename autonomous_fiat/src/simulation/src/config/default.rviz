@@ -9,7 +9,6 @@ Panels:
         - /Marker1
         - /Marker2
         - /AerialMapDisplay1
-        - /AerialMapDisplay1/Status1
       Splitter Ratio: 0.5
     Tree Height: 755
   - Class: rviz/Selection
@@ -173,7 +172,7 @@ Visualization Manager:
       Map Frame: map
       Map transform type: NavSatFix Messages and Map Frame
       Name: AerialMapDisplay
-      Object URI: https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png
+      Object URI: https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=gR9CPBgenyq54EI3gqmE
       Topic: /satellite_vis_topic
       UTM Frame: utm
       UTM Zone: -1
@@ -182,6 +181,14 @@ Visualization Manager:
       Z Offset: 0
       Z Reference: <NavSatFix Message>
       Zoom: 19
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /car_mesh_topic
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -210,16 +217,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 357.58892822265625
+      Distance: 322.19036865234375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -28.929155349731445
-        Y: -22.09271812438965
-        Z: -0.6022050976753235
+        X: -58.8497428894043
+        Y: 21.156349182128906
+        Z: -0.5566397309303284
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -228,7 +235,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.740423202514648
+      Yaw: 4.805424690246582
     Saved: ~
 Window Geometry:
   Displays:

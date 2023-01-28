@@ -1,0 +1,8 @@
+prefix=/media/psf/Robotics2/autonomous_fiat/src/sensors/devel
+
+Name: imu
+Description: Description of imu
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib -limu
+Requires: message_generation geometry_msgs rospy sensor_msgs std_msgs

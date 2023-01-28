@@ -32,6 +32,8 @@ class Car:
         self.MaxTorque = rospy.get_param("car_parameters/MaxTorque")
         self.GR = rospy.get_param("car_parameters/GR")
         self.eta = rospy.get_param("car_parameters/eta")
+        self.Cr = rospy.get_param("car_parameters/Cr")
+        self.BrakingTorque = rospy.get_param("car_parameters/BrakingTorque")
 
 class simul_pipeline():
     def __init__(self):
@@ -128,7 +130,8 @@ class simul_pipeline():
         return marker
 
     def getCarMesh(self):
-        q = quaternion_from_euler(0,0,self.odom.Psi)
+        # q = quaternion_from_euler(0,math.pi/2,self.odom.Psi)
+        q = quaternion_from_euler(0,0,0)
 
         self.carMesh.header.frame_id = "/map"
         self.carMesh.header.stamp = rospy.Time.now()
@@ -156,10 +159,18 @@ class simul_pipeline():
     def setStatesThrottle(self):
         throttle = self.carCommand.throttle
         steering = self.carCommand.steering
+        if throttle > 0:
+            F = self.car.MaxTorque * self.car.GR / self.car.r_wheel * self.car.eta * throttle - 0.5*self.car.aero_drag*(self.odom.vx**2) - self.car.m*self.car.g*self.car.Cr # Longitudinal Force
+        else:
+            F = self.car.BrakingTorque * self.car.GR / self.car.r_wheel * self.car.eta * throttle - 0.5*self.car.aero_drag*(self.odom.vx**2) - self.car.m*self.car.g*self.car.Cr # Longitudinal Force
 
-        F = self.car.MaxTorque * 4 * self.car.GR / self.car.r_wheel * self.car.eta * throttle #- 0.5*self.car.aero_drag*(self.odom.vx**2) # Longitudinal Force
+        
+        # if F > - self.car.m*self.car.g*self.car.Cr:
+        #     F = F - self.car.m*self.car.g*self.car.Cr
+        # else:
+        #     F = 0
 
-        # rospy.loginfo("F: %f",F)
+        # rospy.loginfo("Todal F: %f, Prop: %f, Aero: %f, Roll: %f",F,self.car.MaxTorque * self.car.GR / self.car.r_wheel * self.car.eta * throttle,0.5*self.car.aero_drag*(self.odom.vx**2),self.car.m*self.car.g*0.01)
 
         Beta = math.atan(self.car.Lr*math.tan(steering)/self.car.L) # Side Slip Angle
 
@@ -211,13 +222,13 @@ class simul_pipeline():
         satellite.header.frame_id = "map"
         satellite.status.status = 0
         satellite.status.service = 1
-        # lat, lon = fromUTMtoLatLon(self.refPath[0,0], self.refPath[0,1],29)
-        # rospy.loginfo("lat: %f, lon: %f",lat, lon)
-        # satellite.latitude = lat
-        # satellite.longitude = lon
-        satellite.latitude = self.latitude
-        satellite.longitude = self.longitude
-        satellite.altitude = self.altitude
+        lat, lon = fromUTMtoLatLon(self.refPath[0,0], self.refPath[0,1],29)
+        rospy.loginfo("lat: %f, lon: %f",lat, lon)
+        satellite.latitude = lat
+        satellite.longitude = lon
+        # satellite.latitude = self.latitude
+        # satellite.longitude = self.longitude
+        # satellite.altitude = self.altitude
         # satellite.position_covariance = [3.9561210000000004, 0.0, 0.0, 0.0, 3.9561210000000004, 0.0, 0.0, 0.0, 7.650756]
         # satellite.position_covariance_type = 2
 

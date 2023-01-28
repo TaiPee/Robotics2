@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from scipy.spatial.transform import Rotation as R
 
 def euler_to_quaternion(yaw, pitch, roll):
     cy = math.cos(yaw * 0.5)
@@ -22,11 +23,18 @@ def quaternion_to_euler(qw, qx, qy, qz):
     roll = math.atan2(2 * (qw * qx + qy * qz), qw * qw + qx * qx - qy * qy - qz * qz)
     return yaw, pitch, roll
 
-def get_accelaration(ax, ay, az, yaw, pitch, roll):
+def get_accelaration(ax, ay, az, yaw, pitch, roll, qw, qx, qy, qz ):
     # Calculate acceleration north, east, and down
-    an = ax * math.cos(pitch) + az * math.sin(pitch)
-    ae = ay * math.cos(roll) + ax * math.sin(roll) * math.sin(pitch) + az * math.sin(roll) * math.cos(pitch)
-    ad = ay * math.sin(roll) + ax * math.cos(roll) * math.sin(pitch) + az * math.cos(roll) * math.cos(pitch)
+
+    rot = R.from_quat([qx,qy,qz,qw])
+    acc = np.linalg.inv(rot.as_matrix())
+    accel = np.matmul(acc, np.transpose([ax, ay, az]))
+    # an = ax * math.cos(pitch) + az * math.sin(pitch)
+    # ae = ay * math.cos(roll) + ax * math.sin(roll) * math.sin(pitch) + az * math.sin(roll) * math.cos(pitch)
+    # ad = ay * math.sin(roll) + ax * math.cos(roll) * math.sin(pitch) + az * math.cos(roll) * math.cos(pitch)
+    an = accel[0]
+    ae = accel[1]
+    ad = accel[2]
     return an, ae, ad
 
 

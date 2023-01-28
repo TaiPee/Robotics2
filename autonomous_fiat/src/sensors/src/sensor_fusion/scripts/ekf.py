@@ -14,7 +14,7 @@ class extended_kf():
 
     def __init__(self, initial_position, initial_velocity, position_std_dev ,acceleration_std_dev, time):
 
-        self.x = np.array([[initial_position], [initial_velocity]]) # x denotes the state
+        self.x = np.array([[np.float64(initial_position)], [np.float64(initial_velocity)]]) # x denotes the state
 
         # initial covariance guess
         self.P = np.identity(2)
@@ -60,12 +60,14 @@ class extended_kf():
 
         # measurement residual
         state_error = np.subtract(self.z, self.x)
-
+        
         # residual covariance
-        if(not position_error):
-            self.R[0, 0] = position_error #* position_error
-        else:
-            self.R[1, 1] = velocity_error #* velocity_error
+        self.R[0, 0] = position_error #* position_error
+        self.R[1, 1] = velocity_error #* velocity_error
+        # if(not position_error):
+        #     self.R[0, 0] = position_error #* position_error
+        # else:
+        #     self.R[1, 1] = velocity_error #* velocity_error
 
         # near-optimal Kalman Gain
         s = np.add(self.P, self.R)

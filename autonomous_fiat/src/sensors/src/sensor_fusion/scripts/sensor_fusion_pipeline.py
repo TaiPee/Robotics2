@@ -91,7 +91,7 @@ class sensor_fusion_pipeline():
         
 
         # print(time.time() - self.starting_time)
-        if (time.time() - self.starting_time) > 140:
+        if (time.time() - self.starting_time) > 143:
             # print('Performing the plot.')
             # for i in range(len(self.plot_x)):
             #     plt.scatter(self.plot_x[i], self.plot_y[i])
@@ -103,8 +103,24 @@ class sensor_fusion_pipeline():
                 gmap = gmplot.GoogleMapPlotter(self.plot_lan[0], self.plot_lon[0], 18, apikey=apikey)
                 gmap.scatter(self.plot_lan, self.plot_lon, color='#507af8', size=5, marker=False)
                 gmap.scatter(self.plot_gps_lat, self.plot_gps_lon, color='#FF5733', size=5, marker=False)
-                gmap.draw('map.html')
+                gmap.draw('output_maps/map.html')
                 exit()
+        
+
+        # update states - position and velocity
+        # self.states.x = self.kf_north.get_position()
+        # self.states.y = self.kf_east.get_position()
+
+        # self.states.vx = self.kf_north.get_velocity()
+        # self.states.vy = self.kf_east.get_velocity()
+
+        self.plot_x.append(self.states.x)
+        self.plot_y.append(self.states.y)
+        if self.plot_map:
+            lat, lon = UTMtoLL(self.states.x, self.states.y, '29S')
+            self.plot_lan.append(lat)
+            self.plot_lon.append(lon)
+
                    
         self.state_message = self.stateMsg()
         # self.imu_msg = self.messageImu()
@@ -129,14 +145,26 @@ class sensor_fusion_pipeline():
         # needed transformations
         yaw, pitch, roll = quaternion_to_euler(self.imu.x, self.imu.y, self.imu.z, self.imu.w)
         magnetic_declination = 0.02
-        an, ae, ad = get_accelaration(self.imu.ay, self.imu.ax, self.imu.az, yaw + magnetic_declination, pitch, roll)
+        an, ae, ad = get_accelaration(self.imu.ax, self.imu.ay, self.imu.az, yaw + magnetic_declination, pitch, roll, self.imu.x, self.imu.y, self.imu.z, self.imu.w)
 
         # prediction step @ extended kalman filter
         self.kf_north.predict(an, self.imu.time)
         self.kf_east.predict(ae, self.imu.time)
 
+        # update states - position and velocity
+        self.states.x = self.kf_north.get_position()
+        self.states.y = self.kf_east.get_position()
+
+        self.states.vx = self.kf_north.get_velocity()
+        self.states.vy = self.kf_east.get_velocity()
+
+        print('acceleration', an, ae)
+        print('velocity',self.states.vx, self.states.vy )
+
         # update states
         self.states.yaw = yaw
+
+        self.prev_time = self.imu.time
     
     def update_states(self):
         # needed transformations
@@ -144,14 +172,14 @@ class sensor_fusion_pipeline():
 
         # compute linear velocity
         delta_t = self.gps.time - self.prev_time
-        delta_north = self.states.x - north
-        delta_east = self.states.y - east
+        delta_north = north - self.states.x
+        delta_east = east - self.states.y
         v_north = delta_north/delta_t
         v_east = delta_east/delta_t
 
         # correction step @ extended kalman filter
-        self.kf_north.update(north, v_north, self.gps.acc[0], np.sqrt( self.gps.acc[0]*self.gps.acc[0] + self.gps.acc[0]*self.gps.acc[0]))
-        self.kf_east.update(east, v_east, self.gps.acc[3],  np.sqrt( self.gps.acc[3]*self.gps.acc[3] + self.gps.acc[3]*self.gps.acc[3]))
+        self.kf_north.update(north, v_north, self.gps.acc[0], np.sqrt( self.gps.acc[0] + self.gps.acc[0]))
+        self.kf_east.update(east, v_east, self.gps.acc[3],  np.sqrt( self.gps.acc[3] + self.gps.acc[3]))
 
 
         self.prev_time = self.gps.time
@@ -163,12 +191,13 @@ class sensor_fusion_pipeline():
         self.states.vx = self.kf_north.get_velocity()
         self.states.vy = self.kf_east.get_velocity()
 
-        self.plot_x.append(self.states.x)
-        self.plot_y.append(self.states.y)
-        if self.plot_map:
-            lat, lon = UTMtoLL(self.states.x, self.states.y, '29S')
-            self.plot_lan.append(lat)
-            self.plot_lon.append(lon)
+        # self.plot_x.append(self.states.x)
+        # self.plot_y.append(self.states.y)
+        # if self.plot_map:
+        #     lat, lon = UTMtoLL(self.states.x, self.states.y, '29S')
+        #     self.plot_lan.append(lat)
+        #     self.plot_lon.append(lon)
+
         if self.plot_map:
             lat, lon = UTMtoLL(north, east, '29S')
             self.plot_gps_lat.append(lat)
@@ -185,6 +214,7 @@ class sensor_fusion_pipeline():
         self.imu.ax = data.linear_acceleration.x
         self.imu.ay = data.linear_acceleration.y
         self.imu.az = data.linear_acceleration.z
+        print('FROM IMU',self.imu.ax, self.imu.ay, self.imu.az)
         self.imu.gx = data.angular_velocity.x
         self.imu.gy = data.angular_velocity.y
         self.imu.gz = data.angular_velocity.z

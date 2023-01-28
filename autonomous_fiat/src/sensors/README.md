@@ -117,6 +117,8 @@ This simulation was based on the one performed by the Oregon State University fo
 
 ## GPS coordenates mapping on 
 
+![alt text](output_maps/tagus.png)
+
 # Conclusions
 
 

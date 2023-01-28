@@ -19,8 +19,6 @@ b_filter_steering: [
     0.159341287490797096,
 ]
 
-
-
 # Map Directory
 # map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/trackdrive.yaml
 # map_dir: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/src/control/src/maps/test_map.yaml
@@ -29,6 +27,9 @@ map_dir: 0
 
 # Simulation
 simul: 1 # 0 for no simulation, 1 for abstract simulation (velocity as input), 2 for real simulation (throttle as input)
+latitude: 38.737097
+longitude: -9.138015
+altitude: 92
 
 # Car paarmeters
 car_parameters:

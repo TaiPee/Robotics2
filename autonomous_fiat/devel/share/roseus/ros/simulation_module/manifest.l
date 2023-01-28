@@ -8,6 +8,7 @@
 (ros::load-ros-package "mymsgs_module")
 (ros::load-ros-package "roscpp")
 (ros::load-ros-package "rosgraph_msgs")
+(ros::load-ros-package "sensor_msgs")
 (ros::load-ros-package "std_msgs")
 (ros::load-ros-package "visualization_msgs")
 (ros::load-ros-package "simulation_module")

@@ -63,8 +63,6 @@ class control_pipeline():
         self.minLookAheadDist = rospy.get_param("min_look_ahead_distance")
         self.maxSpeed = rospy.get_param("max_speed")
         self.minSpeed = rospy.get_param("min_speed")
-        self.k_filter_1 = rospy.get_param("k_filter_1")
-        self.k_filter_2 = rospy.get_param("k_filter_2")
         self.b_filter_throttle = rospy.get_param("b_filter_throttle")
         self.b_filter_steering = rospy.get_param("b_filter_steering")
 

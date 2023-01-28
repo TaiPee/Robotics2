@@ -1,4 +1,5 @@
 <launch>
     <include file="$(find control_module)/launch/control.launch"/>
     <include file="$(find simulation_module)/launch/simulation.launch"/>
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="static_tf_fake" args="0 0 0 0 0 0 1 /map base_link" /> -->
 </launch>

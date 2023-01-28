@@ -139,6 +139,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/mymsgs/cmake_install.cmake")
   include("/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/control/src/cmake_install.cmake")
   include("/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/simulation/src/cmake_install.cmake")
+  include("/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/rviz_satellite/cmake_install.cmake")
 
 endif()
 

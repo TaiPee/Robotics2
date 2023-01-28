@@ -1,4 +1,4 @@
-#!~/anaconda3/envs/robotics/bin/python
+#!/usr/bin/env python3
 """ 
 Robotics course at Instituto Superior Tecnico, 2022/2023
 Laboratory 2 - Autonomous Driving 

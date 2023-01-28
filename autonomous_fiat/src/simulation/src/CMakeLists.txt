@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   visualization_msgs
   mymsgs_module
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -72,6 +73,7 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   visualization_msgs
+  sensor_msgs
 )
 
 ################################################

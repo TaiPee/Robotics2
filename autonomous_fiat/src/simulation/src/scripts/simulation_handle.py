@@ -3,6 +3,7 @@ import simulation_pipeline as simul_pipeline
 from mymsgs_module.msg import control_command, car_command, states
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
+from sensor_msgs.msg import NavSatFix
 
 class simul_handle():
     def __init__(self):
@@ -13,6 +14,7 @@ class simul_handle():
         self.pipeline = simul_pipeline.simul_pipeline()
         self.advertise()
         self.subscribe()
+        
         
 
     def subscribe(self):
@@ -34,6 +36,9 @@ class simul_handle():
         self.pubVisCar = rospy.Publisher('Car_vis_topic', Marker, queue_size=1)
         self.pubVisRef = rospy.Publisher('refPath_vis_topic', Marker, queue_size=1)
         self.pubVisLookAhead = rospy.Publisher('lookAhead_vis_topic', Marker, queue_size=1)
+        self.pubSatellite = rospy.Publisher('satellite_vis_topic', NavSatFix, queue_size=1)
+        self.pubCarMesh = rospy.Publisher('car_mesh_topic', Marker, queue_size=1)
+
 
     def run(self):
         self.pipeline.runSimulation(self.simul)
@@ -44,6 +49,8 @@ class simul_handle():
         # Visualization
         self.pubVisCar.publish(self.pipeline.carVis)
         self.pubVisRef.publish(self.pipeline.refPathVis)
+        self.pubSatellite.publish(self.pipeline.satellite)
+        self.pubCarMesh.publish(self.pipeline.carMesh)
 
 
     # CALLBACKS

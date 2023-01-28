@@ -70,7 +70,7 @@ simulation/src/CMakeFiles/simulation_module_generate_messages_eus: /home/david/D
 
 /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/devel/share/roseus/ros/simulation_module/manifest.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating EusLisp manifest code for simulation_module"
-	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/simulation/src && ../../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py -m -o /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/devel/share/roseus/ros/simulation_module simulation_module std_msgs visualization_msgs
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build/simulation/src && ../../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py -m -o /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/devel/share/roseus/ros/simulation_module simulation_module std_msgs visualization_msgs sensor_msgs
 
 simulation_module_generate_messages_eus: simulation/src/CMakeFiles/simulation_module_generate_messages_eus
 simulation_module_generate_messages_eus: /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/devel/share/roseus/ros/simulation_module/manifest.l

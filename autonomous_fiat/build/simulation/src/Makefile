@@ -242,6 +242,76 @@ visualization_msgs_generate_messages_py/fast:
 .PHONY : visualization_msgs_generate_messages_py/fast
 
 # Convenience name for target.
+simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/rule:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/rule
+.PHONY : simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/rule
+
+# Convenience name for target.
+sensor_msgs_generate_messages_cpp: simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/rule
+.PHONY : sensor_msgs_generate_messages_cpp
+
+# fast build rule for target.
+sensor_msgs_generate_messages_cpp/fast:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/build.make simulation/src/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/build
+.PHONY : sensor_msgs_generate_messages_cpp/fast
+
+# Convenience name for target.
+simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/rule:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/rule
+.PHONY : simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/rule
+
+# Convenience name for target.
+sensor_msgs_generate_messages_eus: simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/rule
+.PHONY : sensor_msgs_generate_messages_eus
+
+# fast build rule for target.
+sensor_msgs_generate_messages_eus/fast:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/build.make simulation/src/CMakeFiles/sensor_msgs_generate_messages_eus.dir/build
+.PHONY : sensor_msgs_generate_messages_eus/fast
+
+# Convenience name for target.
+simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/rule:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/rule
+.PHONY : simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/rule
+
+# Convenience name for target.
+sensor_msgs_generate_messages_lisp: simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/rule
+.PHONY : sensor_msgs_generate_messages_lisp
+
+# fast build rule for target.
+sensor_msgs_generate_messages_lisp/fast:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/build.make simulation/src/CMakeFiles/sensor_msgs_generate_messages_lisp.dir/build
+.PHONY : sensor_msgs_generate_messages_lisp/fast
+
+# Convenience name for target.
+simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/rule:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/rule
+.PHONY : simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/rule
+
+# Convenience name for target.
+sensor_msgs_generate_messages_nodejs: simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/rule
+.PHONY : sensor_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+sensor_msgs_generate_messages_nodejs/fast:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/build.make simulation/src/CMakeFiles/sensor_msgs_generate_messages_nodejs.dir/build
+.PHONY : sensor_msgs_generate_messages_nodejs/fast
+
+# Convenience name for target.
+simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/rule:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/rule
+.PHONY : simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/rule
+
+# Convenience name for target.
+sensor_msgs_generate_messages_py: simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/rule
+.PHONY : sensor_msgs_generate_messages_py
+
+# fast build rule for target.
+sensor_msgs_generate_messages_py/fast:
+	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/build.make simulation/src/CMakeFiles/sensor_msgs_generate_messages_py.dir/build
+.PHONY : sensor_msgs_generate_messages_py/fast
+
+# Convenience name for target.
 simulation/src/CMakeFiles/simulation_module_generate_messages.dir/rule:
 	cd /home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simulation/src/CMakeFiles/simulation_module_generate_messages.dir/rule
 .PHONY : simulation/src/CMakeFiles/simulation_module_generate_messages.dir/rule
@@ -408,6 +478,11 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... sensor_msgs_generate_messages_cpp"
+	@echo "... sensor_msgs_generate_messages_eus"
+	@echo "... sensor_msgs_generate_messages_lisp"
+	@echo "... sensor_msgs_generate_messages_nodejs"
+	@echo "... sensor_msgs_generate_messages_py"
 	@echo "... simulation_module_gencpp"
 	@echo "... simulation_module_generate_messages"
 	@echo "... simulation_module_generate_messages_cpp"

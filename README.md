@@ -12,4 +12,4 @@ Autonomous vehicles, Self-driving cars, Path planning, Computer vision, Localiza
 
 
 # System Overview
-![alt text](system_overview.svg)
+![alt text](system_overview.png)

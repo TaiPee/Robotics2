@@ -21,8 +21,22 @@ To overcome the limitations of GNSS, this work presents a sensor fusion algorith
 
 The code in this directory is organized into the following sub directories and files:
 
+`\gps\`
+
   - `efk.py`: The main entry point for the program.
   - `.py`: 
+
+
+`imu`
+
+`\sensor_fusion\scripts\`
+
+  - `efk.py`: Class object containing the EKF functions.
+  - `geonav_conversions.py`: 
+  - `efk_handle.py`: 
+
+`sensors`
+
 
 # Background
 

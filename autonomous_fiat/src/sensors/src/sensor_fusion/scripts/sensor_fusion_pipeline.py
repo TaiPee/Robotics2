@@ -11,6 +11,7 @@ from ekf import extended_kf
 from ekf_handle import *
 from geonav_conversions import *
 import matplotlib.pyplot as plt
+from gmplot import *
 # from states.msg import states
 
 class States:
@@ -40,7 +41,7 @@ class IMU:
         self.az = 0.0
         self.covA = [0 for i in range(9)]
         self.gx = 0.0
-        self.gy = 0.0 
+        self.gy = 0.0
         self.gz = 0.0
         self.covG = [0 for i in range(9)]
         self.time = 0.0
@@ -56,6 +57,12 @@ class sensor_fusion_pipeline():
 
         self.plot_x = []
         self.plot_y = []
+
+        self.plot_map = True
+
+        if self.plot_map:
+            self.plot_lan = []
+            self.plot_lon = []
 
         self.starting_time = time.time()
         
@@ -82,13 +89,20 @@ class sensor_fusion_pipeline():
         
 
         # print(time.time() - self.starting_time)
-        if (time.time() - self.starting_time) > 200.0:
-            print('Performing the plot.')
-            for i in range(len(self.plot_x)):
-                plt.scatter(self.plot_x[i], self.plot_y[i])
-                plt.pause(0.001)
-        
+        if (time.time() - self.starting_time) > 200:
+            # print('Performing the plot.')
+            # for i in range(len(self.plot_x)):
+            #     plt.scatter(self.plot_x[i], self.plot_y[i])
+            #     plt.pause(0.001)
 
+            if self.plot_map:
+                print('Printing on the map')
+                apikey = 'AIzaSyDHA7vBHxV3OZyOIGmMWqkz1rp7bcrRbBw'
+                gmap = gmplot.GoogleMapPlotter(self.plot_lan[0], self.plot_lon[0], 18, apikey=apikey)
+                gmap.scatter(self.plot_lan, self.plot_lon, color='#507af8', size=5, marker=False)
+                gmap.draw('map.html')
+                exit()
+                   
         self.state_message = self.stateMsg()
         # self.imu_msg = self.messageImu()
         # self.mag_msg = self.messageMag()
@@ -125,8 +139,6 @@ class sensor_fusion_pipeline():
         # needed transformations
         north, east, _ = LLtoUTM(self.gps.lat, self.gps.long)
 
-        # north, east = latToMtrs(self.gps.lat), lonToMtrs(self.gps.long)
-
         # compute linear velocity
         delta_t = self.gps.time - self.prev_time
         delta_north = self.states.x - north
@@ -134,7 +146,7 @@ class sensor_fusion_pipeline():
         v_north = delta_north/delta_t
         v_east = delta_east/delta_t
 
-        # correction step @ extenbded kalman filter
+        # correction step @ extended kalman filter
         self.kf_north.update(north, v_north, self.gps.acc[0], np.sqrt( self.gps.acc[0]*self.gps.acc[0] + self.gps.acc[0]*self.gps.acc[0]))
         self.kf_east.update(east, v_east, self.gps.acc[3],  np.sqrt( self.gps.acc[3]*self.gps.acc[3] + self.gps.acc[3]*self.gps.acc[3]))
 
@@ -150,6 +162,10 @@ class sensor_fusion_pipeline():
 
         self.plot_x.append(self.states.x)
         self.plot_y.append(self.states.y)
+        if self.plot_map:
+            lat, lon = UTMtoLL(self.states.x, self.states.y, '29S')
+            self.plot_lan.append(lat)
+            self.plot_lon.append(lon)
         
         plt.scatter(self.states.x, self.states.y)
         plt.scatter(north, east, color = 'black', marker='^')
@@ -177,7 +193,6 @@ class sensor_fusion_pipeline():
         self.gps.lat = data.latitude
         self.gps.long = data.longitude
         self.gps.acc = data.position_covariance
-        print(self.gps.acc)
         self.gps.time = data.header.stamp.to_time()
 
     def setLookAhead(self, data):

@@ -55,20 +55,12 @@ class imu_pipeline():
         msg.linear_acceleration.x = self.states.aX
         msg.linear_acceleration.y = self.states.aY
         msg.linear_acceleration.z = self.states.aZ
-        mat_Acc = mat.copy()
-        mat_Acc[0] = (0.03098151 * 9.8) * (0.03098151 * 9.8)
-        mat_Acc[4] = (0.01384 * 9.8) * (0.01384 * 9.8)
-        mat_Acc[8] = (0.06675811 * 9.8) * (0.06675811 * 9.8)
-        msg.linear_acceleration_covariance = mat_Acc ### Find real covariace -> TODO
+        msg.linear_acceleration_covariance = mat ### Find real covariace -> TODO
 
         msg.angular_velocity.x = self.states.gX
         msg.angular_velocity.y = self.states.gY
         msg.angular_velocity.z = self.states.gZ
-        mat_Gyro = mat.copy()
-        mat_Gyro[0] = (-2.1239999999 * 0.0174) * (-2.1239999999 * 0.0174)
-        mat_Gyro[4] = (2.0618999999 * 0.0174) * (2.0618999999 * 0.0174)
-        mat_Gyro[8] = (-0.3989999999 * 0.0174) * (-0.3989999999 * 0.0174)
-        msg.angular_velocity_covariance = mat_Gyro ### Find real covariace -> TODO
+        msg.angular_velocity_covariance = mat ### Find real covariace -> TODO
 
         return msg
 
@@ -81,14 +73,9 @@ class imu_pipeline():
         h.seq = self.index
         msg.header = h
 
-        mat = [0.0 for i in range(9)]
-        mat[0] = (-27.6585 * 1e-6) * (-27.6585 * 1e-6)
-        mat[4] = (-27.664 * 1e-6) * (-27.664 * 1e-6)
-        mat[8] = (+48.41 * 1e-6) * (+48.41 * 1e-6)
-        msg.magnetic_field.x = self.states.mX
-        msg.magnetic_field.y = self.states.mY
-        msg.magnetic_field.z = self.states.mZ
-        msg.magnetic_field_covariance = mat
+        msg.magnetic_field.x = self.states.mX * 1e-6
+        msg.magnetic_field.y = self.states.mY  * 1e-6
+        msg.magnetic_field.z = self.states.mZ * 1e-6
 
         return msg
 
@@ -109,12 +96,12 @@ class imu_pipeline():
             # print( " ay = " , ( accel['y'] ))
             # print( " az = " , ( accel['z'] ))
             # coeff_accel=[1.00047918,-0.03098151]
-            #data.append(accel['x']*1.00047918-0.03098151)
-            data.append(accel['x'])
-            #data.append(accel['y']*0.99873312-0.01384)
-            data.append(accel['y'])
-            #data.append(accel['z']*0.98270031-0.06675811)
-            data.append(accel['z'])
+            data.append(accel['x']*1.00047918-0.03098151)
+            # data.append(accel['x'])
+            data.append(accel['y']*0.99873312-0.01384)
+            # data.append(accel['y'])
+            data.append(accel['z']*0.98270031-0.06675811)
+            # data.append(accel['z'])
 
             
             gyro = mpu9250.readGyro()
@@ -122,12 +109,12 @@ class imu_pipeline():
             #print( " gy = " , ( gyro['y'] ))
             #print( " gz = " , ( gyro['z'] ))
             
-            #data.append(gyro['x']-2.1239999999)
-            #data.append(gyro['y']+2.0618999999)
-            #data.append(gyro['z']-0.3989999999)
-            data.append(gyro['x'])
-            data.append(gyro['y'])
-            data.append(gyro['z'])
+            data.append(gyro['x']-2.1239999999)
+            data.append(gyro['y']+2.0618999999)
+            data.append(gyro['z']-0.3989999999)
+            # data.append(gyro['x'])
+            # data.append(gyro['y'])
+            # data.append(gyro['z'])
 
 
 
@@ -159,9 +146,9 @@ class imu_pipeline():
         self.states.gX = data[3] * 0.0174
         self.states.gY = data[4] * 0.0174
         self.states.gZ = data[5] * 0.0174
-        self.states.mX = data[6] * 1e-6
-        self.states.mY = data[7] * 1e-6
-        self.states.mZ = data[8] * 1e-6
+        self.states.mX = data[6]
+        self.states.mY = data[7]
+        self.states.mZ = data[8]
 
     def setLookAhead(self, data):
         pass

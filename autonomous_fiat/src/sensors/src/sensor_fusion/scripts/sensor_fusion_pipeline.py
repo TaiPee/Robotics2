@@ -91,7 +91,7 @@ class sensor_fusion_pipeline():
         
 
         # print(time.time() - self.starting_time)
-        if (time.time() - self.starting_time) > 143:
+        if (time.time() - self.starting_time) > 240:
             # print('Performing the plot.')
             # for i in range(len(self.plot_x)):
             #     plt.scatter(self.plot_x[i], self.plot_y[i])
@@ -145,7 +145,7 @@ class sensor_fusion_pipeline():
         # needed transformations
         yaw, pitch, roll = quaternion_to_euler(self.imu.x, self.imu.y, self.imu.z, self.imu.w)
         magnetic_declination = 0.02
-        an, ae, ad = get_accelaration(self.imu.ax, self.imu.ay, self.imu.az, yaw + magnetic_declination, pitch, roll, self.imu.x, self.imu.y, self.imu.z, self.imu.w)
+        an, ae, ad = get_accelaration(self.imu.ay, self.imu.ax, self.imu.az, yaw + magnetic_declination, pitch, roll, self.imu.x, self.imu.y, self.imu.z, self.imu.w)
 
         # prediction step @ extended kalman filter
         self.kf_north.predict(an, self.imu.time)

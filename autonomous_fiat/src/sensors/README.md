@@ -120,14 +120,3 @@ This simulation was based on the one performed by the Oregon State University fo
 ![alt text](output_maps/tagus.png)
 
 # Conclusions
-
-
-
-## Code Contributors
-
-This project exists thanks to all the people who contribute.
-<a href="https://github.com/TaiPee/Robotics2/tree/bea2/autonomous_fiat/src/sensors/graphs/contributors"><img src="https://github.com/TaiPee/Robotics2/tree/bea2/autonomous_fiat/src/sensors/contributors.svg?width=890&button=false" /></a>
-
-## Credits
-* https://github.com/UASLab/OpenFlight/blob/master/FlightCode/navigation/EKF_15state_quat.c
-* https://github.com/FlyTheThings/uNavINS

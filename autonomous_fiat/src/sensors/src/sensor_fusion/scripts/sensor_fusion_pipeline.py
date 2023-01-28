@@ -91,7 +91,7 @@ class sensor_fusion_pipeline():
         
 
         # print(time.time() - self.starting_time)
-        if (time.time() - self.starting_time) > 240:
+        if (time.time() - self.starting_time) > 170:
             # print('Performing the plot.')
             # for i in range(len(self.plot_x)):
             #     plt.scatter(self.plot_x[i], self.plot_y[i])
@@ -106,7 +106,6 @@ class sensor_fusion_pipeline():
                 gmap.draw('output_maps/map.html')
                 exit()
         
-
         # update states - position and velocity
         # self.states.x = self.kf_north.get_position()
         # self.states.y = self.kf_east.get_position()

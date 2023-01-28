@@ -6,10 +6,5 @@ This paper presents a comprehensive study of various key components required for
 ## Keywords
 Autonomous vehicles, Self-driving cars, Path planning, Computer vision, Localization, Control systems,  Pure Pursuit, Sensor fusion, Extended Kalman Filter
 
-
-# Instructions
-## Execution Guidelines
-
-
 # System Overview
 ![alt text](system_overview.png)

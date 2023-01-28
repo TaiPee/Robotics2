@@ -29,12 +29,12 @@ def get_accelaration(ax, ay, az, yaw, pitch, roll, qw, qx, qy, qz ):
     rot = R.from_quat([qx,qy,qz,qw])
     acc = np.linalg.inv(rot.as_matrix())
     accel = np.matmul(acc, np.transpose([ax, ay, az]))
-    # an = ax * math.cos(pitch) + az * math.sin(pitch)
-    # ae = ay * math.cos(roll) + ax * math.sin(roll) * math.sin(pitch) + az * math.sin(roll) * math.cos(pitch)
-    # ad = ay * math.sin(roll) + ax * math.cos(roll) * math.sin(pitch) + az * math.cos(roll) * math.cos(pitch)
-    an = accel[0]
-    ae = accel[1]
-    ad = accel[2]
+    an = ax * math.cos(pitch) + az * math.sin(pitch)
+    ae = ay * math.cos(roll) + ax * math.sin(roll) * math.sin(pitch) + az * math.sin(roll) * math.cos(pitch)
+    ad = ay * math.sin(roll) + ax * math.cos(roll) * math.sin(pitch) + az * math.cos(roll) * math.cos(pitch)
+    # an = accel[0]
+    # ae = accel[1]
+    # ad = accel[2]
     return an, ae, ad
 
 

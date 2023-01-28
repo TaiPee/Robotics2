@@ -22,10 +22,10 @@ class extended_kf():
         # transformation matrix for input data
         self.H = np.identity(2)
 
-        acceleration_var = acceleration_std_dev * acceleration_std_dev
+        acceleration_var = acceleration_std_dev #* acceleration_std_dev
         self.Q = np.array([[acceleration_var, 0], [0, acceleration_var]])
 
-        position_var = position_std_dev * position_std_dev
+        position_var = position_std_dev #* position_std_dev
         self.R = np.array([[position_var, 0], [0, position_var]])
 
         self.current_time = time
@@ -63,9 +63,9 @@ class extended_kf():
 
         # residual covariance
         if(not position_error):
-            self.R[0, 0] = position_error * position_error
+            self.R[0, 0] = position_error #* position_error
         else:
-            self.R[1, 1] = velocity_error * velocity_error
+            self.R[1, 1] = velocity_error #* velocity_error
 
         # near-optimal Kalman Gain
         s = np.add(self.P, self.R)
@@ -74,19 +74,19 @@ class extended_kf():
         except np.linalg.LinAlgError:
             pass
         else:
+            # s_inverse = np.eye(2)
             K = np.matmul(self.P, s_inverse)
 
-        # updated state estimate
-        self.x = np.add(self.x, np.matmul(K, state_error))
+            # updated state estimate
+            self.x = np.add(self.x, np.matmul(K, state_error))
 
-        # update covariance estimate
-        self.P = np.matmul(np.subtract(np.identity(2), K), self.P)
+            # update covariance estimate
+            self.P = np.matmul(np.subtract(np.identity(2), K), self.P)
 
     def get_position(self):
         '''
         Returns predicted position in the current axis.
         '''
-
         return self.x[0, 0]
 
     def get_velocity(self):

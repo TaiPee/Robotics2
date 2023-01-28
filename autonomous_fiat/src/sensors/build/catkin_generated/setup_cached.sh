@@ -7,8 +7,10 @@
 # new environment variables
 
 # modified environment variables
-export LD_LIBRARY_PATH='/opt/ros/noetic/lib'
-export PKG_CONFIG_PATH='/opt/ros/noetic/lib/pkgconfig'
+export CMAKE_PREFIX_PATH="/media/psf/Robotics2/autonomous_fiat/src/sensors/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/media/psf/Robotics2/autonomous_fiat/src/sensors/build'
-export PYTHONPATH='/opt/ros/noetic/lib/python3/dist-packages'
-export ROS_PACKAGE_PATH='/media/psf/Robotics2/autonomous_fiat/src/sensors/src:/opt/ros/noetic/share'
+export PYTHONPATH="/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/lib/python3/dist-packages:$PYTHONPATH"
+export ROSLISP_PACKAGE_DIRECTORIES='/media/psf/Robotics2/autonomous_fiat/src/sensors/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/media/psf/Robotics2/autonomous_fiat/src/sensors/src:$ROS_PACKAGE_PATH"

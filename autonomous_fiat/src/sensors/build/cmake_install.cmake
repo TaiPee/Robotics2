@@ -131,9 +131,13 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/gtest/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_tools/cmake_install.cmake")
   include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/gps/cmake_install.cmake")
   include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu/cmake_install.cmake")
   include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/sensor_fusion/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_complementary_filter/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/imu_filter_madgwick/cmake_install.cmake")
+  include("/media/psf/Robotics2/autonomous_fiat/src/sensors/build/imu_tools/rviz_imu_plugin/cmake_install.cmake")
 
 endif()
 

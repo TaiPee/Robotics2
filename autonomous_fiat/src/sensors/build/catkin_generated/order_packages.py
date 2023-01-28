@@ -2,4 +2,4 @@
 source_root_dir = '/media/psf/Robotics2/autonomous_fiat/src/sensors/src'
 whitelisted_packages = ''.split(';') if '' != '' else []
 blacklisted_packages = ''.split(';') if '' != '' else []
-underlay_workspaces = '/media/psf/Robotics2/autonomous_fiat/src/sensors/devel;/opt/ros/noetic'.split(';') if '/media/psf/Robotics2/autonomous_fiat/src/sensors/devel;/opt/ros/noetic' != '' else []
+underlay_workspaces = '/opt/ros/noetic'.split(';') if '/opt/ros/noetic' != '' else []

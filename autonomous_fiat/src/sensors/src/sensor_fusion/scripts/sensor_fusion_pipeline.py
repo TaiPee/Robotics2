@@ -1,4 +1,5 @@
 import rospy
+import numpy as np
 import pandas as pd
 import math
 from datetime import time
@@ -9,7 +10,8 @@ import time
 from ekf import extended_kf
 from ekf_handle import *
 from geonav_conversions import *
-#from states.msg import states
+import matplotlib.pyplot as plt
+# from states.msg import states
 
 class States:
     def __init__(self):
@@ -25,6 +27,7 @@ class GPS:
         self.lat = 0.0
         self.long = 0.0
         self.acc = 0.0
+        self.time = 0.0
 
 class IMU:
     def __init__(self):
@@ -35,75 +38,125 @@ class IMU:
         self.ax = 0.0
         self.ay = 0.0
         self.az = 0.0
-        #self.covA = [0 for i in range(9)]
+        self.covA = [0 for i in range(9)]
         self.gx = 0.0
         self.gy = 0.0 
         self.gz = 0.0
-        #self.covG = [0 for i in range(9)]
+        self.covG = [0 for i in range(9)]
+        self.time = 0.0
 
 class sensor_fusion_pipeline():
     def __init__(self):
         rospy.loginfo("Hello Rita")
-        self.state = States()
+        self.states = States()
         self.index = 0
-        self.imu = IMU()
         self.gps = GPS()
+        self.flag = 0
+        self.imu = IMU()
+
+        self.plot_x = []
+        self.plot_y = []
+
+        self.starting_time = time.time()
+        
 
     def runAlgorithm(self):
         """ Dummy code for testing."""
 
+        if self.flag == 0:
+            time.sleep(2)
+            # initialize extended kalman filter
+            x, y, _ = LLtoUTM(self.gps.lat, self.gps.long)
+            # x, y = latToMtrs(self.gps.lat), lonToMtrs(self.gps.long)
+            self.states.x = x
+            self.states.y = y
+            self.kf_north = extended_kf(self.states.x, 0, self.gps.acc[0], np.sqrt( self.gps.acc[0]*self.gps.acc[0] + self.gps.acc[0]*self.gps.acc[0]), self.gps.time)
+            self.kf_east = extended_kf(self.states.y, 0, self.gps.acc[3], np.sqrt( self.gps.acc[3]*self.gps.acc[3] + self.gps.acc[3]*self.gps.acc[3]), self.gps.time)
+
+            self.prev_time = self.gps.time
+            if self.states.x != 0:
+                print('Kalman filter successfully initiated.')
+            else:
+                exit()
+            self.flag = 1
+        
+
+        # print(time.time() - self.starting_time)
+        if (time.time() - self.starting_time) > 200.0:
+            print('Performing the plot.')
+            for i in range(len(self.plot_x)):
+                plt.scatter(self.plot_x[i], self.plot_y[i])
+                plt.pause(0.001)
+        
+
         self.state_message = self.stateMsg()
-        #self.imu_msg = self.messageImu()
-        #self.mag_msg = self.messageMag()
-        #self.index += 1
+        # self.imu_msg = self.messageImu()
+        # self.mag_msg = self.messageMag()
+        # self.index += 1
 
     def stateMsg(self):
-        #msg = states()
-        #msg.X = self.state.X
-        #msg.Y = self.state.Y
-        #msg.Psi = self.state.Psi
-        #msg.vx = self.state.vx
-        #msg.vy = self.state.vy
+        # msg = states()
+        # msg.X = self.state.X
+        # msg.Y = self.state.Y
+        # msg.Psi = self.state.Psi
+        # msg.vx = self.state.vx
+        # msg.vy = self.state.vy
 
-        #return msg
+        # return msg
         return
+
     def getState(self):
         return self.state_message
+    
+    def predict_states(self):
+        # needed transformations
+        yaw, pitch, roll = quaternion_to_euler(self.imu.x, self.imu.y, self.imu.z, self.imu.w)
+        magnetic_declination = 0.02
+        an, ae, ad = get_accelaration(self.imu.ay, self.imu.ax, self.imu.az, yaw + magnetic_declination, pitch, roll)
 
-    def setStates(self, data):
-        self.state.aX = data.linear_acceleration.x
-        self.state.aY = data.linear_acceleration.y
-        self.state.aZ = data.linear_acceleration.z
-        
-        x = data.orientation.x
-        y = data.orientation.y
-        z = data.orientation.z
-        w = data.orientation.w
+        # prediction step @ extended kalman filter
+        self.kf_north.predict(an, self.imu.time)
+        self.kf_east.predict(ae, self.imu.time)
 
-        yaw, pitch, roll = quaternion_to_euler(x, y, z, w)
-        an, ae, ad = get_accelaration(self.state.aX, self.state.aY, self.state.aZ, yaw, pitch, roll)
-
-        # t3 = +2.0 * (w * z + x * y)
-        # t4 = +1.0 - 2.0 * (y * y + z * z)
-        # yaw = math.atan2(t3, t4)
-
+        # update states
         self.states.yaw = yaw
-        self.states.pitch = pitch
-        self.states.roll = roll
-        self.states.an = an
-        self.states.ae = ae
-        self.states.ad = ad
+    
+    def update_states(self):
+        # needed transformations
+        north, east, _ = LLtoUTM(self.gps.lat, self.gps.long)
 
-        north, east, _ = LLtoUTM(data.latitude, data.longitude)
-        prev_north = self.states.x
-        prev_east = self.states.y
-        delta_t = 0.01
+        # north, east = latToMtrs(self.gps.lat), lonToMtrs(self.gps.long)
 
-        self.states.vx = (north - prev_north)/delta_t
-        self.states.vy = (east - prev_east)/delta_t
-        self.states.x = north
-        self.states.y = east
-        self.states.gps_acc = data.position_covariance
+        # compute linear velocity
+        delta_t = self.gps.time - self.prev_time
+        delta_north = self.states.x - north
+        delta_east = self.states.y - east
+        v_north = delta_north/delta_t
+        v_east = delta_east/delta_t
+
+        # correction step @ extenbded kalman filter
+        self.kf_north.update(north, v_north, self.gps.acc[0], np.sqrt( self.gps.acc[0]*self.gps.acc[0] + self.gps.acc[0]*self.gps.acc[0]))
+        self.kf_east.update(east, v_east, self.gps.acc[3],  np.sqrt( self.gps.acc[3]*self.gps.acc[3] + self.gps.acc[3]*self.gps.acc[3]))
+
+
+        self.prev_time = self.gps.time
+
+        # update states - position and velocity
+        self.states.x = self.kf_north.get_position()
+        self.states.y = self.kf_east.get_position()
+
+        self.states.vx = self.kf_north.get_velocity()
+        self.states.vy = self.kf_east.get_velocity()
+
+        self.plot_x.append(self.states.x)
+        self.plot_y.append(self.states.y)
+        
+        plt.scatter(self.states.x, self.states.y)
+        plt.scatter(north, east, color = 'black', marker='^')
+        # plt.xlim([620+4.287e6,710+4.287e6])
+        # plt.ylim([473690,473760])
+        plt.pause(0.0000001)
+        return
 
     def setIMU(self, data):
         self.imu.ax = data.linear_acceleration.x
@@ -116,31 +169,16 @@ class sensor_fusion_pipeline():
         self.imu.y = data.orientation.y
         self.imu.z = data.orientation.z
         self.imu.w = data.orientation.w
-        # data.header.stamp 
-        #self.imu.covA = data.linear_acceleration_covariance
-        #self.imu.covG = data.angulr_velocity_covariance
-
-        print('IMU')
-        print('Ax = ' + str(self.imu.ax))
-        print('Gx = ' + str(self.imu.gx))
-        print('X  = ' + str(self.imu.x))
-        print(data.header.stamp)
-        print(data.linear_acceleration_covariance)
-        # print(data.linear_acceleration_covariance)
-        # print(data.angulr_velocity_covariance)
-        return
+        self.imu.time = data.header.stamp.to_time()
+        self.covA = data.orientation_covariance
+        self.covV = data.angular_velocity_covariance
 
     def setGPS(self,data):
         self.gps.lat = data.latitude
         self.gps.long = data.longitude
         self.gps.acc = data.position_covariance
-        print('GPS')
-        print('Lat = ' + str(self.gps.lat))
-        print('Long = ' + str(self.gps.long))
-        print('Acc ^ 2 = ' + str(self.gps.acc))
-       
-        print()
-        return
-        
+        print(self.gps.acc)
+        self.gps.time = data.header.stamp.to_time()
+
     def setLookAhead(self, data):
         pass

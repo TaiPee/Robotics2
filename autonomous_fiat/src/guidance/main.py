@@ -37,7 +37,7 @@ FILENAMES = ['images/tecnico.png', 'images/path1.jpg', 'images/path2.jpg']
 FILENAMES_FILLED = ['images/tecnico_gordo.png', 'images/path1.jpg', 'images/path2.jpg']
 
 # Indexes of images in filenames list TO ACTUALLY PROCESS
-TO_PROCESS = [0, 1, 2]
+TO_PROCESS = [0,1,2]
 
 ############################################################################################
 ######################     HYPERPARAMETERS OF THE CODE     #################################
@@ -98,7 +98,7 @@ def main(filename, filename_filled, start_point, end_point, points_ref, r_matrix
 
     # get clusters with ordered points
     clusters = img.getOrderedClusters(sk, bif_points, ERASE_BIF_RADIUS, MIN_DIST_CLUSTER, BIF_WINDOW_SIZE, MIN_BIF_NEIGHBORS, 4)
-    
+    io.plotClusters(clusters, sk.shape) 
     ##########   SEARCH    ##########
 
     map = srch.Map(clusters, INTER_CLUSTER_DIST, sk.shape)

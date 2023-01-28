@@ -12,7 +12,7 @@ DEBUG_PRINT = False
 PLOT = True
 DRAW_RADIUS = 10
 TEXT_SIZE = 1.2
-POINTS_SIZE = 2
+POINTS_SIZE = 5
 GIF_POINTS = 30
 NO_GIF_POINTS = 150
 
@@ -228,7 +228,7 @@ def plotRelevantPoints(sk, starting_points, bif_points, start_point, end_point):
     fig = drawPoints(cv.cvtColor(255 - sk, cv.COLOR_GRAY2BGR), starting_points, color=(0,0,255), radius=DRAW_RADIUS)
     fig = drawPoints(fig, bif_points, color=(0,255,0), radius=DRAW_RADIUS)
 
-    # draw start and end points with purple and red color
+    # draw start and end points
     fig = drawPoints(fig, [start_point], color=(255,0,255), radius=DRAW_RADIUS)
     fig = drawPoints(fig, [end_point], color=(0,100,0), radius=DRAW_RADIUS)
     

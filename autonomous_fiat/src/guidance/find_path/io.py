@@ -330,7 +330,7 @@ def world2image(points, image_to_world_matrix):
 
 # get point from current gps position 
 def getGPSpoint(image_to_world_matrix):
-    LLpoint = None
+    LLpoint = (0,0)
     
     # get gps position
     # bea e isa e tiagão

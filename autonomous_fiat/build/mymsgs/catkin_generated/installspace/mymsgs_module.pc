@@ -1,0 +1,8 @@
+prefix=/home/david/Documents/Tecnico/SecondQuarter/Robotics/Lab2/Robotics2/autonomous_fiat/install
+
+Name: mymsgs_module
+Description: Description of mymsgs_module
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: message_generation rospy
